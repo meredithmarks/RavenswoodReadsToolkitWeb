@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Ravenswood Reads Toolkit": {
+      "applicationId": "wZP8XhBHCTrtM7H59rFlabjreAM4AZSLvDVYcuyv"
+    },
+    "_default": {
+      "link": "Ravenswood Reads Toolkit"
+    }
+  }
+}
