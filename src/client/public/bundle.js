@@ -49,8 +49,6 @@
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -69,64 +67,69 @@
 	
 	var _LessonsSidebarComponent2 = _interopRequireDefault(_LessonsSidebarComponent);
 	
+	var _LessonPlanDetail = __webpack_require__(/*! ./LessonPlanDetail.jsx */ 163);
+	
+	var _LessonPlanDetail2 = _interopRequireDefault(_LessonPlanDetail);
+	
+	var _reactfire = __webpack_require__(/*! reactfire */ 162);
+	
+	var _reactfire2 = _interopRequireDefault(_reactfire);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var App = _react2.default.createClass({
+	  displayName: 'App',
 	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	  mixins: [_reactfire2.default],
 	
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	  componentWillMount: function componentWillMount() {
+	    var ref = new _firebase2.default("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
+	    this.bindAsArray(ref, "lessonPlans");
+	  },
 	
-	  function App(props) {
-	    _classCallCheck(this, App);
+	  setSelectedPlan: function setSelectedPlan(plan) {
+	    this.setState({ selectedPlan: plan });
+	  },
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
-	
-	    _this.state = {};
-	
-	    _this.firebaseRef = new _firebase2.default("https://rrtoolkit.firebaseio.com/");
-	    return _this;
-	  }
-	
-	  _createClass(App, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
+	  render: function render() {
+	    var renderPlan = function renderPlan(plan) {
+	      if (plan) {
+	        return _react2.default.createElement(_LessonPlanDetail2.default, { plan: plan });
+	      } else {
+	        return "Nothing here!";
+	      }
+	    };
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
 	        'div',
-	        null,
+	        { id: 'topbar' },
 	        _react2.default.createElement(
-	          'div',
-	          { id: 'topbar' },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'pull-left' },
-	            ' Ravenswood Reads Lesson Planner '
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'createButton pull-right' },
-	            ' + '
-	          )
+	          'h3',
+	          { className: 'pull-left' },
+	          ' Ravenswood Reads Lesson Planner '
 	        ),
 	        _react2.default.createElement(
-	          'div',
-	          { id: 'sidebar' },
-	          _react2.default.createElement(_LessonsSidebarComponent2.default, null)
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { id: 'content' },
-	          'Hello world!'
+	          'button',
+	          { className: 'createButton pull-right' },
+	          ' + '
 	        )
-	      );
-	    }
-	  }]);
-	
-	  return App;
-	}(_react2.default.Component);
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { id: 'sidebar' },
+	        _react2.default.createElement(_LessonsSidebarComponent2.default, { handleClick: this.setSelectedPlan, plans: this.state.lessonPlans })
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { id: 'content' },
+	        renderPlan(this.state.selectedPlan)
+	      )
+	    );
+	  }
+	});
 	
 	(0, _reactDom.render)(_react2.default.createElement(App, null), document.getElementById('app'));
 
@@ -20505,7 +20508,7 @@
   \**************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -20533,42 +20536,47 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanSidebarCell).call(this, props));
 	
-	    _this.state = { likesCount: 0, id: props.id };
-	    _this.onLike = _this.onLike.bind(_this);
+	    _this.state = { plan: props.lessonPlan };
+	    _this.handleClick = _this.handleClick.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(LessonPlanSidebarCell, [{
-	    key: "onLike",
-	    value: function onLike() {
-	      var newLikesCount = this.state.likesCount + 1;
-	      this.setState({ likesCount: newLikesCount });
-	      console.log(this.state.id);
+	    key: '_timestampToDate',
+	    value: function _timestampToDate(timestamp) {
+	      var a = new Date(timestamp * 1000);
+	      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	      var year = a.getFullYear();
+	      var month = months[a.getMonth()];
+	      var date = a.getDate();
+	
+	      return month + ' ' + date + ', ' + year;
 	    }
 	  }, {
-	    key: "render",
+	    key: 'handleClick',
+	    value: function handleClick(event) {
+	      this.props.handleClick(this.state.plan);
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
-	      return(
-	        // <div className="row">
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'LessonPlanSidebarCell', onClick: this.handleClick },
 	        _react2.default.createElement(
-	          "div",
-	          { className: "LessonPlanSidebarCell" },
-	          _react2.default.createElement(
-	            "strong",
-	            { className: "pull-left" },
-	            " Wed, April 16 "
-	          ),
-	          _react2.default.createElement(
-	            "div",
-	            { className: "pull-right" },
-	            " /A/ "
-	          )
+	          'strong',
+	          { className: 'pull-left' },
+	          ' ',
+	          this.state.plan.title,
+	          ' '
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'pull-right' },
+	          ' ',
+	          this._timestampToDate(this.state.plan.date),
+	          ' '
 	        )
-	        // </div>
-	
-	        //   Likes : <span>{this.state.likesCount}</span>
-	        //   <div><button onClick={this.onLike}>Like Me</button></div>
-	
 	      );
 	    }
 	  }]);
@@ -20612,33 +20620,28 @@
 	var LessonsSidebarComponent = function (_React$Component) {
 	  _inherits(LessonsSidebarComponent, _React$Component);
 	
-	  function LessonsSidebarComponent(props) {
+	  function LessonsSidebarComponent() {
 	    _classCallCheck(this, LessonsSidebarComponent);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LessonsSidebarComponent).call(this, props));
-	
-	    _this.state = {};
-	    return _this;
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LessonsSidebarComponent).apply(this, arguments));
 	  }
 	
 	  _createClass(LessonsSidebarComponent, [{
 	    key: 'render',
 	    value: function render() {
 	
-	      var rows = [];
-	      for (var i = 0; i < 10; i++) {
-	        rows.push(_react2.default.createElement(
-	          'row',
-	          null,
-	          ' ',
-	          _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: i, id: i, className: 'LessonPlanSidebarCell' }),
-	          ' '
-	        ));
-	      }
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'sidebarInner' },
-	        rows
+	        this.props.plans.map(function (plan) {
+	          return _react2.default.createElement(
+	            'row',
+	            null,
+	            ' ',
+	            _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan, lessonPlan: plan, handleClick: this.props.handleClick, className: 'LessonPlanSidebarCell' }),
+	            ' '
+	          );
+	        }.bind(this))
 	      );
 	    }
 	  }]);
@@ -20647,6 +20650,444 @@
 	}(_react2.default.Component);
 	
 	exports.default = LessonsSidebarComponent;
+
+/***/ },
+/* 162 */
+/*!***************************************!*\
+  !*** ./~/reactfire/dist/reactfire.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	 * ReactFire is an open-source JavaScript library that allows you to add a
+	 * realtime data source to your React apps by providing an easy way to let
+	 * Firebase populate the state of React components.
+	 *
+	 * ReactFire 0.7.0
+	 * https://github.com/firebase/reactfire/
+	 * License: MIT
+	 */
+	/* eslint "strict": [2, "function"] */
+	(function(root, factory) {
+	  'use strict';
+	
+	  /* istanbul ignore next */
+	  if (true) {
+	    // AMD
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
+	      return (root.ReactFireMixin = factory());
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    // CommonJS
+	    module.exports = factory();
+	  } else {
+	    // Global variables
+	    root.ReactFireMixin = factory();
+	  }
+	}(this, function() {
+	  'use strict';
+	
+	  /*************/
+	  /*  HELPERS  */
+	  /*************/
+	  /**
+	   * Returns the index of the key in the list. If an item with the key is not in the list, -1 is
+	   * returned.
+	   *
+	   * @param {Array<any>} list A list of items.
+	   * @param {string} key The key for which to search.
+	   * @return {number} The index of the item which has the provided key or -1 if no items have the
+	   * provided key.
+	   */
+	  function _indexForKey(list, key) {
+	    for (var i = 0, length = list.length; i < length; ++i) {
+	      if (list[i]['.key'] === key) {
+	        return i;
+	      }
+	    }
+	
+	    /* istanbul ignore next */
+	    return -1;
+	  }
+	
+	  /**
+	   * Throws a formatted error message.
+	   *
+	   * @param {string} message The error message to throw.
+	   */
+	  function _throwError(message) {
+	    throw new Error('ReactFire: ' + message);
+	  }
+	
+	  /**
+	   * Validates the name of the variable which is being bound.
+	   *
+	   * @param {string} bindVar The variable which is being bound.
+	   */
+	  function _validateBindVar(bindVar) {
+	    var errorMessage;
+	
+	    if (typeof bindVar !== 'string') {
+	      errorMessage = 'Bind variable must be a string. Got: ' + bindVar;
+	    } else if (bindVar.length === 0) {
+	      errorMessage = 'Bind variable must be a non-empty string. Got: ""';
+	    } else if (bindVar.length > 768) {
+	      // Firebase can only stored child paths up to 768 characters
+	      errorMessage = 'Bind variable is too long to be stored in Firebase. Got: ' + bindVar;
+	    } else if (/[\[\].#$\/\u0000-\u001F\u007F]/.test(bindVar)) {
+	      // Firebase does not allow node keys to contain the following characters
+	      errorMessage = 'Bind variable cannot contain any of the following characters: . # $ ] [ /. Got: ' + bindVar;
+	    }
+	
+	    if (typeof errorMessage !== 'undefined') {
+	      _throwError(errorMessage);
+	    }
+	  }
+	
+	  /**
+	   * Creates a new record given a key-value pair.
+	   *
+	   * @param {string} key The new record's key.
+	   * @param {any} value The new record's value.
+	   * @return {Object} The new record.
+	   */
+	  function _createRecord(key, value) {
+	    var record = {};
+	    if (typeof value === 'object' && value !== null) {
+	      record = value;
+	    } else {
+	      record['.value'] = value;
+	    }
+	    record['.key'] = key;
+	
+	    return record;
+	  }
+	
+	
+	  /******************************/
+	  /*  BIND AS OBJECT LISTENERS  */
+	  /******************************/
+	  /**
+	   * 'value' listener which updates the value of the bound state variable.
+	   *
+	   * @param {string} bindVar The state variable to which the data is being bound.
+	   * @param {Firebase.DataSnapshot} snapshot A snapshot of the data being bound.
+	   */
+	  function _objectValue(bindVar, snapshot) {
+	    var key = snapshot.key();
+	    var value = snapshot.val();
+	
+	    this.data[bindVar] = _createRecord(key, value);
+	
+	    this.setState(this.data);
+	  }
+	
+	
+	  /*****************************/
+	  /*  BIND AS ARRAY LISTENERS  */
+	  /*****************************/
+	  /**
+	   * 'child_added' listener which adds a new record to the bound array.
+	   *
+	   * @param {string} bindVar The state variable to which the data is being bound.
+	   * @param {Firebase.DataSnapshot} snapshot A snapshot of the data being bound.
+	   * @param {string|null} previousChildKey The key of the child after which the provided snapshot
+	   * is positioned; null if the provided snapshot is in the first position.
+	   */
+	  function _arrayChildAdded(bindVar, snapshot, previousChildKey) {
+	    var key = snapshot.key();
+	    var value = snapshot.val();
+	    var array = this.data[bindVar];
+	
+	    // Determine where to insert the new record
+	    var insertionIndex;
+	    if (previousChildKey === null) {
+	      insertionIndex = 0;
+	    } else {
+	      var previousChildIndex = _indexForKey(array, previousChildKey);
+	      insertionIndex = previousChildIndex + 1;
+	    }
+	
+	    // Add the new record to the array
+	    array.splice(insertionIndex, 0, _createRecord(key, value));
+	
+	    // Update state
+	    this.setState(this.data);
+	  }
+	
+	  /**
+	   * 'child_removed' listener which removes a record from the bound array.
+	   *
+	   * @param {string} bindVar The state variable to which the data is bound.
+	   * @param {Firebase.DataSnapshot} snapshot A snapshot of the bound data.
+	   */
+	  function _arrayChildRemoved(bindVar, snapshot) {
+	    var array = this.data[bindVar];
+	
+	    // Look up the record's index in the array
+	    var index = _indexForKey(array, snapshot.key());
+	
+	    // Splice out the record from the array
+	    array.splice(index, 1);
+	
+	    // Update state
+	    this.setState(this.data);
+	  }
+	
+	  /**
+	   * 'child_changed' listener which updates a record's value in the bound array.
+	   *
+	   * @param {string} bindVar The state variable to which the data is bound.
+	   * @param {Firebase.DataSnapshot} snapshot A snapshot of the data to bind.
+	   */
+	  function _arrayChildChanged(bindVar, snapshot) {
+	    var key = snapshot.key();
+	    var value = snapshot.val();
+	    var array = this.data[bindVar];
+	
+	    // Look up the record's index in the array
+	    var index = _indexForKey(array, key);
+	
+	    // Update the record's value in the array
+	    array[index] = _createRecord(key, value);
+	
+	    // Update state
+	    this.setState(this.data);
+	  }
+	
+	  /**
+	   * 'child_moved' listener which updates a record's position in the bound array.
+	   *
+	   * @param {string} bindVar The state variable to which the data is bound.
+	   * @param {Firebase.DataSnapshot} snapshot A snapshot of the bound data.
+	   * @param {string|null} previousChildKey The key of the child after which the provided snapshot
+	   * is positioned; null if the provided snapshot is in the first position.
+	   */
+	  function _arrayChildMoved(bindVar, snapshot, previousChildKey) {
+	    var key = snapshot.key();
+	    var array = this.data[bindVar];
+	
+	    // Look up the record's index in the array
+	    var currentIndex = _indexForKey(array, key);
+	
+	    // Splice out the record from the array
+	    var record = array.splice(currentIndex, 1)[0];
+	
+	    // Determine where to re-insert the record
+	    var insertionIndex;
+	    if (previousChildKey === null) {
+	      insertionIndex = 0;
+	    } else {
+	      var previousChildIndex = _indexForKey(array, previousChildKey);
+	      insertionIndex = previousChildIndex + 1;
+	    }
+	
+	    // Re-insert the record into the array
+	    array.splice(insertionIndex, 0, record);
+	
+	    // Update state
+	    this.setState(this.data);
+	  }
+	
+	
+	  /*************/
+	  /*  BINDING  */
+	  /*************/
+	  /**
+	   * Creates a binding between Firebase and the inputted bind variable as either an array or
+	   * an object.
+	   *
+	   * @param {Firebase} firebaseRef The Firebase ref whose data to bind.
+	   * @param {string} bindVar The state variable to which to bind the data.
+	   * @param {function} cancelCallback The Firebase reference's cancel callback.
+	   * @param {boolean} bindAsArray Whether or not to bind as an array or object.
+	   */
+	  function _bind(firebaseRef, bindVar, cancelCallback, bindAsArray) {
+	    if (Object.prototype.toString.call(firebaseRef) !== '[object Object]') {
+	      _throwError('Invalid Firebase reference');
+	    }
+	
+	    _validateBindVar(bindVar);
+	
+	    if (typeof this.firebaseRefs[bindVar] !== 'undefined') {
+	      _throwError('this.state.' + bindVar + ' is already bound to a Firebase reference');
+	    }
+	
+	    // Keep track of the Firebase reference we are setting up listeners on
+	    this.firebaseRefs[bindVar] = firebaseRef.ref();
+	
+	    if (bindAsArray) {
+	      // Set initial state to an empty array
+	      this.data[bindVar] = [];
+	      this.setState(this.data);
+	
+	      // Add listeners for all 'child_*' events
+	      this.firebaseListeners[bindVar] = {
+	        child_added: firebaseRef.on('child_added', _arrayChildAdded.bind(this, bindVar), cancelCallback),
+	        child_removed: firebaseRef.on('child_removed', _arrayChildRemoved.bind(this, bindVar), cancelCallback),
+	        child_changed: firebaseRef.on('child_changed', _arrayChildChanged.bind(this, bindVar), cancelCallback),
+	        child_moved: firebaseRef.on('child_moved', _arrayChildMoved.bind(this, bindVar), cancelCallback)
+	      };
+	    } else {
+	      // Add listener for 'value' event
+	      this.firebaseListeners[bindVar] = {
+	        value: firebaseRef.on('value', _objectValue.bind(this, bindVar), cancelCallback)
+	      };
+	    }
+	  }
+	
+	
+	  var ReactFireMixin = {
+	    /********************/
+	    /*  MIXIN LIFETIME  */
+	    /********************/
+	    /**
+	     * Initializes the Firebase refs and listeners arrays.
+	     **/
+	    componentWillMount: function() {
+	      this.data = {};
+	      this.firebaseRefs = {};
+	      this.firebaseListeners = {};
+	    },
+	
+	    /**
+	     * Unbinds any remaining Firebase listeners.
+	     */
+	    componentWillUnmount: function() {
+	      for (var bindVar in this.firebaseRefs) {
+	        /* istanbul ignore else */
+	        if (this.firebaseRefs.hasOwnProperty(bindVar)) {
+	          this.unbind(bindVar);
+	        }
+	      }
+	    },
+	
+	
+	    /*************/
+	    /*  BINDING  */
+	    /*************/
+	    /**
+	     * Creates a binding between Firebase and the inputted bind variable as an array.
+	     *
+	     * @param {Firebase} firebaseRef The Firebase ref whose data to bind.
+	     * @param {string} bindVar The state variable to which to bind the data.
+	     * @param {function} cancelCallback The Firebase reference's cancel callback.
+	     */
+	    bindAsArray: function(firebaseRef, bindVar, cancelCallback) {
+	      var bindPartial = _bind.bind(this);
+	      bindPartial(firebaseRef, bindVar, cancelCallback, /* bindAsArray */ true);
+	    },
+	
+	    /**
+	     * Creates a binding between Firebase and the inputted bind variable as an object.
+	     *
+	     * @param {Firebase} firebaseRef The Firebase ref whose data to bind.
+	     * @param {string} bindVar The state variable to which to bind the data.
+	     * @param {function} cancelCallback The Firebase reference's cancel callback.
+	     */
+	    bindAsObject: function(firebaseRef, bindVar, cancelCallback) {
+	      var bindPartial = _bind.bind(this);
+	      bindPartial(firebaseRef, bindVar, cancelCallback, /* bindAsArray */ false);
+	    },
+	
+	    /**
+	     * Removes the binding between Firebase and the inputted bind variable.
+	     *
+	     * @param {string} bindVar The state variable to which the data is bound.
+	     * @param {function} callback Called when the data is unbound and the state has been updated.
+	     */
+	    unbind: function(bindVar, callback) {
+	      _validateBindVar(bindVar);
+	
+	      if (typeof this.firebaseRefs[bindVar] === 'undefined') {
+	        _throwError('this.state.' + bindVar + ' is not bound to a Firebase reference');
+	      }
+	
+	      // Turn off all Firebase listeners
+	      for (var event in this.firebaseListeners[bindVar]) {
+	        /* istanbul ignore else */
+	        if (this.firebaseListeners[bindVar].hasOwnProperty(event)) {
+	          var offListener = this.firebaseListeners[bindVar][event];
+	          this.firebaseRefs[bindVar].off(event, offListener);
+	        }
+	      }
+	      delete this.firebaseRefs[bindVar];
+	      delete this.firebaseListeners[bindVar];
+	
+	      // Update state
+	      var newState = {};
+	      newState[bindVar] = undefined;
+	      this.setState(newState, callback);
+	    }
+	  };
+	
+	  return ReactFireMixin;
+	}));
+
+
+/***/ },
+/* 163 */
+/*!*********************************************!*\
+  !*** ./src/client/app/LessonPlanDetail.jsx ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var LessonPlanDetail = function (_React$Component) {
+	  _inherits(LessonPlanDetail, _React$Component);
+	
+	  function LessonPlanDetail(props) {
+	    _classCallCheck(this, LessonPlanDetail);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanDetail).call(this, props));
+	  }
+	
+	  _createClass(LessonPlanDetail, [{
+	    key: "render",
+	    value: function render() {
+	      var plan = this.props.plan;
+	      console.log(plan);
+	      return _react2.default.createElement(
+	        "div",
+	        null,
+	        _react2.default.createElement(
+	          "h2",
+	          null,
+	          plan.title
+	        ),
+	        _react2.default.createElement(
+	          "div",
+	          null,
+	          "Books to re-read: ",
+	          plan.rereadingBooks.join(", ")
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return LessonPlanDetail;
+	}(_react2.default.Component);
+	
+	exports.default = LessonPlanDetail;
 
 /***/ }
 /******/ ]);

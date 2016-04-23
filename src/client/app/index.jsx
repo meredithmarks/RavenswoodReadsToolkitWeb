@@ -3,19 +3,30 @@ import {render} from 'react-dom';
 import Firebase from 'firebase';
 import LessonPlanSidebarCell from './LessonPlanSidebarCell.jsx';
 import LessonsSidebarComponent from './LessonsSidebarComponent.jsx';
+import LessonPlanDetail from './LessonPlanDetail.jsx';
+import ReactFireMixin from 'reactfire';
 
-class App extends React.Component {
-  constructor(props) {
-  	super(props);
+const App = React.createClass({
 
-  	this.state = {
+  mixins: [ReactFireMixin],
 
-  	}
+  componentWillMount: function() {
+    var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
+    this.bindAsArray(ref, "lessonPlans");
+  },
 
-    this.firebaseRef = new Firebase("https://rrtoolkit.firebaseio.com/");
-  }
+  setSelectedPlan: function(plan) {
+  	this.setState({selectedPlan: plan});
+  },
 
-  render () {
+  render() {
+  	var renderPlan = function(plan) {
+  		if (plan) {
+  			return <LessonPlanDetail plan={plan} />;
+  		} else {
+  			return "Nothing here!";
+  		}
+  	};
     return  (
     	<div>
 		    <div id="topbar">
@@ -24,15 +35,14 @@ class App extends React.Component {
 		    </div>
 
 		    <div id="sidebar">
-		    	<LessonsSidebarComponent />
+		    	<LessonsSidebarComponent handleClick={this.setSelectedPlan} plans={this.state.lessonPlans} />
 		    </div>
-
 		    <div id="content">
-		    	Hello world!
+		    	{renderPlan(this.state.selectedPlan)}
 		    </div>
 		</div>
     );
   }
-}
+});
 
 render(<App/>, document.getElementById('app'));

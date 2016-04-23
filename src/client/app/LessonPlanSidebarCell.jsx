@@ -4,28 +4,30 @@ class LessonPlanSidebarCell extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {likesCount : 0, id: props.id};
-    this.onLike = this.onLike.bind(this);
+    this.state = {plan : props.lessonPlan};
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  onLike () {
-    let newLikesCount = this.state.likesCount + 1;
-    this.setState({likesCount: newLikesCount});
-    console.log(this.state.id);
+  _timestampToDate(timestamp) {
+    var a = new Date(timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+
+    return month + ' ' + date + ', ' + year;
+  }
+
+  handleClick(event) {
+    this.props.handleClick(this.state.plan)
   }
 
   render() {
     return (
-      // <div className="row"> 
-        <div className="LessonPlanSidebarCell">
-          <strong className="pull-left"> Wed, April 16 </strong>
-          <div className="pull-right"> /A/ </div>
+        <div className="LessonPlanSidebarCell" onClick={this.handleClick}>
+          <strong className="pull-left"> {this.state.plan.title} </strong>
+          <div className="pull-right"> {this._timestampToDate(this.state.plan.date)} </div>
         </div>
-      // </div>
-
-
-      //   Likes : <span>{this.state.likesCount}</span>
-      //   <div><button onClick={this.onLike}>Like Me</button></div>
     );
   }
 

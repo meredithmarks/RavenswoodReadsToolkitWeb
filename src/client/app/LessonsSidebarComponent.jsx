@@ -3,21 +3,14 @@ import LessonPlanSidebarCell from './LessonPlanSidebarCell.jsx';
 
 class LessonsSidebarComponent extends React.Component {
 
-  constructor(props) {
-  	super(props);
+  render() {
 
-  	this.state = {
+  	return <div className="sidebarInner">{this.props.plans.map(
+      (function(plan) {
+        return <row> <LessonPlanSidebarCell key={plan} lessonPlan={plan} handleClick={this.props.handleClick} className="LessonPlanSidebarCell"/> </row>;
+      }).bind(this)
+    )}</div>;
 
-  	}
-  }
-
-  render () {
-
-    var rows = [];
-    for (var i=0; i < 10; i++) {
-        rows.push(<row> <LessonPlanSidebarCell key={i} id={i} className="LessonPlanSidebarCell"/> </row>);
-    }
-  	return <div className="sidebarInner">{rows}</div>;
   }
 }
 
