@@ -4,18 +4,11 @@
 	top: 60px;
 	left: 0px;
 	height: 100%;
-	width: 200px;
-
-	/* border */
-	border-right: #9F9F9F 1px solid;
+	width: 250px;
+	padding: 5px 0 5px 8px;
 }
 
 .sidebarInner {
-	border-color: #9F9F9F;
-	border-width: 1px;
-	border-style: solid;
-	border-top: none;
-
 	/*width: 250px;*/
 	height: 100%;
 	min-width: 150px;
@@ -24,22 +17,56 @@
 	padding: 0;
 }
 
-.LessonPlanSidebarCell {
-	border-bottom: #9F9F9F 1px solid;
-
+.lesson-plan-sidebar-cell {
 	width: 100%;
-	padding: 0;
+	margin-bottom: 5px;
+	padding: 15px 15px 10px 15px;
 	float: left;
+	background-color: white;
 }
 
-.LessonPlanSidebarCell div {
-	padding: 5px;
-	padding-bottom: 10px;
-	padding-top: 10px;
+.selected {
+	border-left: rgba(74, 144, 226, 1) 3px solid;
+	padding: 15px 15px 10px 12px;
 }
 
-.LessonPlanSidebarCell strong {
-	padding: 5px;
-	padding-bottom: 10px;
-	padding-top: 10px;
+.header-cell {
+	width: 100%;
+	margin: 10px 0px 5px 0px;
+	float: left;
+	text-align: center;
+	font-weight: 300;
+	font-size: 22px;
+	color: rgba(155, 155, 155, 1);
+}
+
+.sidebar-lesson-plan-title {
+	font-weight: 300;
+	font-size: 28px;
+	color: rgba(74, 74, 74, 1);
+	text-align: left;
+}
+
+.sidebar-lesson-plan-date {
+	font-weight: 300;
+	font-size: 18px;
+	color: rgba(74, 74, 74, 1);
+	text-align: left;
+}
+
+.delete-plan-button {
+	color: rgba(74, 74, 74, 1);
+	position: absolute;
+	font-size: 20px;
+	right: 10px;
+	margin-top: -13px;
+	cursor: pointer;
+}
+
+.see-more-button {
+	color: rgba(155, 155, 155, 1);
+	position: absolute;
+	font-size: 20px;
+	cursor: pointer;
+	top: 15px;
 }

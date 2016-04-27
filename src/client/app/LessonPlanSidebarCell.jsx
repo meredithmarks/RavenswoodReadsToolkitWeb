@@ -6,11 +6,12 @@ class LessonPlanSidebarCell extends React.Component {
     super(props);
     this.state = {plan : props.lessonPlan};
     this.handleClick = this.handleClick.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   _timestampToDate(timestamp) {
     var a = new Date(timestamp * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
@@ -19,14 +20,22 @@ class LessonPlanSidebarCell extends React.Component {
   }
 
   handleClick(event) {
-    this.props.handleClick(this.state.plan)
+    this.props.handleClick(this.state.plan);
+  }
+
+  handleDelete(event) {
+    event.stopPropagation();
+    this.props.handleDelete(this.state.plan['.key']);
   }
 
   render() {
+    var classnames = "lesson-plan-sidebar-cell"
+    if (this.props.selected) classnames += ' selected';
     return (
-        <div className="LessonPlanSidebarCell" onClick={this.handleClick}>
-          <strong className="pull-left"> {this.state.plan.title} </strong>
-          <div className="pull-right"> {this._timestampToDate(this.state.plan.date)} </div>
+        <div className={classnames} onClick={this.handleClick}>
+          <div className="delete-plan-button" onClick={this.handleDelete}> &times; </div>
+          <div className="sidebar-lesson-plan-date"> {this._timestampToDate(this.state.plan.date)} </div>
+          <div className="sidebar-lesson-plan-title"> {this.state.plan.title} </div>
         </div>
     );
   }

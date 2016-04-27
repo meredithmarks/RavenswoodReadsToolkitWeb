@@ -67,11 +67,11 @@
 	
 	var _LessonsSidebarComponent2 = _interopRequireDefault(_LessonsSidebarComponent);
 	
-	var _LessonPlanDetail = __webpack_require__(/*! ./LessonPlanDetail.jsx */ 163);
+	var _LessonPlanDetail = __webpack_require__(/*! ./LessonPlanDetail.jsx */ 162);
 	
 	var _LessonPlanDetail2 = _interopRequireDefault(_LessonPlanDetail);
 	
-	var _reactfire = __webpack_require__(/*! reactfire */ 162);
+	var _reactfire = __webpack_require__(/*! reactfire */ 163);
 	
 	var _reactfire2 = _interopRequireDefault(_reactfire);
 	
@@ -92,35 +92,82 @@
 	    this.setState({ selectedPlan: plan });
 	  },
 	
+	  deleteLessonPlan: function deleteLessonPlan(key) {
+	    // var firebaseRef = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
+	    this.firebaseRefs["lessonPlans"].child(key).remove();
+	    if (this.state.selectedPlan && this.state.selectedPlan['.key'] === key) {
+	      this.setState({ selectedPlan: undefined });
+	    }
+	    // onClick={ _this.props.removeItem.bind(null, item['.key']) }
+	    // var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
+	    // ref.on('value', function(dataSnapshot) {
+	    //   var items = [];
+	    //   dataSnapshot.forEach(function(childSnapshot) {
+	    //     var item = childSnapshot.val();
+	    //     item['.key'] = childSnapshot.key();
+	    //     items.push(item);
+	    //   }.bind(this));
+	
+	    //   this.setState({
+	    //     lessonPlans: items
+	    //   });
+	    // }.bind(this));
+	  },
+	
 	  render: function render() {
 	    var renderPlan = function renderPlan(plan) {
 	      if (plan) {
 	        return _react2.default.createElement(_LessonPlanDetail2.default, { plan: plan });
 	      } else {
-	        return "Nothing here!";
+	        return "Click to see a lesson plan!";
 	      }
 	    };
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'div',
+	        'table',
 	        { id: 'topbar' },
 	        _react2.default.createElement(
-	          'h3',
-	          { className: 'pull-left' },
-	          ' Ravenswood Reads Lesson Planner '
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { className: 'createButton pull-right' },
-	          ' + '
+	          'tbody',
+	          null,
+	          _react2.default.createElement(
+	            'tr',
+	            null,
+	            _react2.default.createElement(
+	              'td',
+	              { width: '250px' },
+	              ' ',
+	              _react2.default.createElement('img', { id: 'current-child-picture', src: './public/BabyLucas.jpg' }),
+	              ' ',
+	              _react2.default.createElement(
+	                'span',
+	                { id: 'current-child-name' },
+	                'Lucas T. ',
+	                _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'td',
+	              { className: 'header-title' },
+	              ' Ravenswood Reads Lesson Planner '
+	            ),
+	            _react2.default.createElement(
+	              'td',
+	              { width: '250px' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'create-button pull-right' },
+	                ' + '
+	              )
+	            )
+	          )
 	        )
 	      ),
 	      _react2.default.createElement(
 	        'div',
 	        { id: 'sidebar' },
-	        _react2.default.createElement(_LessonsSidebarComponent2.default, { handleClick: this.setSelectedPlan, plans: this.state.lessonPlans })
+	        _react2.default.createElement(_LessonsSidebarComponent2.default, { handleClick: this.setSelectedPlan, handleDelete: this.deleteLessonPlan, selectedPlan: this.state.selectedPlan, plans: this.state.lessonPlans })
 	      ),
 	      _react2.default.createElement(
 	        'div',
@@ -20538,6 +20585,7 @@
 	
 	    _this.state = { plan: props.lessonPlan };
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.handleDelete = _this.handleDelete.bind(_this);
 	    return _this;
 	  }
 	
@@ -20545,7 +20593,7 @@
 	    key: '_timestampToDate',
 	    value: function _timestampToDate(timestamp) {
 	      var a = new Date(timestamp * 1000);
-	      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 	      var year = a.getFullYear();
 	      var month = months[a.getMonth()];
 	      var date = a.getDate();
@@ -20558,23 +20606,36 @@
 	      this.props.handleClick(this.state.plan);
 	    }
 	  }, {
+	    key: 'handleDelete',
+	    value: function handleDelete(event) {
+	      event.stopPropagation();
+	      this.props.handleDelete(this.state.plan['.key']);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var classnames = "lesson-plan-sidebar-cell";
+	      if (this.props.selected) classnames += ' selected';
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'LessonPlanSidebarCell', onClick: this.handleClick },
+	        { className: classnames, onClick: this.handleClick },
 	        _react2.default.createElement(
-	          'strong',
-	          { className: 'pull-left' },
+	          'div',
+	          { className: 'delete-plan-button', onClick: this.handleDelete },
+	          ' × '
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'sidebar-lesson-plan-date' },
 	          ' ',
-	          this.state.plan.title,
+	          this._timestampToDate(this.state.plan.date),
 	          ' '
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'pull-right' },
+	          { className: 'sidebar-lesson-plan-title' },
 	          ' ',
-	          this._timestampToDate(this.state.plan.date),
+	          this.state.plan.title,
 	          ' '
 	        )
 	      );
@@ -20629,20 +20690,78 @@
 	  _createClass(LessonsSidebarComponent, [{
 	    key: 'render',
 	    value: function render() {
+	      var planned = [];
+	      var completed = [];
+	      this.props.plans.map(function (plan) {
+	        if (plan.completed) {
+	          completed.push(plan);
+	        } else {
+	          planned.push(plan);
+	        }
+	      });
 	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'sidebarInner' },
-	        this.props.plans.map(function (plan) {
-	          return _react2.default.createElement(
+	      if (this.props.plans.length > 0) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'sidebarInner' },
+	          _react2.default.createElement(
 	            'row',
 	            null,
-	            ' ',
-	            _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan, lessonPlan: plan, handleClick: this.props.handleClick, className: 'LessonPlanSidebarCell' }),
-	            ' '
-	          );
-	        }.bind(this))
-	      );
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'see-more-button' },
+	              ' ',
+	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' }),
+	              ' '
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'header-cell' },
+	              ' Planned '
+	            )
+	          ),
+	          planned.map(function (plan) {
+	            return _react2.default.createElement(
+	              'row',
+	              null,
+	              ' ',
+	              _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan['.key'], selected: this.props.selectedPlan === plan, lessonPlan: plan, handleClick: this.props.handleClick, handleDelete: this.props.handleDelete, className: 'LessonPlanSidebarCell' }),
+	              ' '
+	            );
+	          }.bind(this)),
+	          _react2.default.createElement(
+	            'row',
+	            null,
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'see-more-button' },
+	              ' ',
+	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' }),
+	              ' '
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'header-cell' },
+	              ' Completed '
+	            )
+	          ),
+	          completed.map(function (plan) {
+	            return _react2.default.createElement(
+	              'row',
+	              null,
+	              ' ',
+	              _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan['.key'], selected: this.props.selectedPlan === plan, lessonPlan: plan, handleClick: this.props.handleClick, handleDelete: this.props.handleDelete, className: 'LessonPlanSidebarCell' }),
+	              ' '
+	            );
+	          }.bind(this))
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'row',
+	          null,
+	          ' No lesson plans found! '
+	        );
+	      }
 	    }
 	  }]);
 	
@@ -20653,6 +20772,326 @@
 
 /***/ },
 /* 162 */
+/*!*********************************************!*\
+  !*** ./src/client/app/LessonPlanDetail.jsx ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _constants = __webpack_require__(/*! ./constants */ 164);
+	
+	var _constants2 = _interopRequireDefault(_constants);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var LessonPlanDetail = function (_React$Component) {
+	  _inherits(LessonPlanDetail, _React$Component);
+	
+	  function LessonPlanDetail(props) {
+	    _classCallCheck(this, LessonPlanDetail);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanDetail).call(this, props));
+	  }
+	
+	  _createClass(LessonPlanDetail, [{
+	    key: '_timestampToDate',
+	    value: function _timestampToDate(timestamp) {
+	      var a = new Date(timestamp * 1000);
+	      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+	      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+	      var year = a.getFullYear();
+	      var month = months[a.getMonth()];
+	      var date = a.getDate();
+	      var day = days[a.getDay()];
+	
+	      return day + ', ' + month + ' ' + date + ', ' + year;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var plan = this.props.plan;
+	      console.log(plan);
+	
+	      var renderNotes = function renderNotes(plan) {
+	        if (plan.completed) {
+	          return _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'section-title' },
+	              'Lesson Notes:'
+	            ),
+	            _react2.default.createElement(
+	              'ul',
+	              { className: 'section-details' },
+	              _react2.default.createElement(
+	                'li',
+	                null,
+	                plan.notes
+	              )
+	            )
+	          );
+	        } else {
+	          return;
+	        }
+	      };
+	
+	      var renderWordBankActivity = function renderWordBankActivity(activity) {
+	        var game = "";
+	        switch (activity.game) {
+	          case 0:
+	            game = "Bingo - ";
+	            break;
+	          case 1:
+	            game = "Memory - ";
+	            break;
+	          case 7:
+	            game = "Letter Tiles - ";
+	            break;
+	          case 5:
+	            game = activity.otherDescription + " - ";
+	            break;
+	        }
+	
+	        return _react2.default.createElement(
+	          'span',
+	          null,
+	          game,
+	          ' ',
+	          activity.wordList.map(function (word, index) {
+	            if (index < activity.numNewWords) {
+	              return _react2.default.createElement(
+	                'span',
+	                { className: 'regular' },
+	                word,
+	                ', '
+	              );
+	            } else if (index === activity.wordList.length - 1) {
+	              return _react2.default.createElement(
+	                'span',
+	                null,
+	                word
+	              );
+	            } else {
+	              return _react2.default.createElement(
+	                'span',
+	                null,
+	                word,
+	                ', '
+	              );
+	            }
+	          })
+	        );
+	      };
+	
+	      var renderPhonicsActivity = function renderPhonicsActivity(activity) {
+	        var game = "";
+	        switch (activity.game) {
+	          case 2:
+	            game = "Letter Tiles - ";
+	            break;
+	          case 3:
+	            game = "Picture Sorts - ";
+	            break;
+	          case 4:
+	            game = "Rainbow Writing - ";
+	            break;
+	          case 6:
+	            game = activity.otherDescription;
+	            break;
+	        }
+	
+	        if (activity.pattern2 === "") {
+	          if (activity.game == 2) {
+	            // letter tiles
+	            if (activity.otherDescription === "") {
+	              // non-custom
+	              return game + activity.pattern1 + ": " + _constants2.default.LetterTilesWordLists[_constants2.default.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
+	            } else {
+	              return game + activity.otherDescription.replace(/\n/g, ", ");
+	            }
+	          }
+	          return game + activity.pattern1;
+	        } else {
+	          return game + activity.pattern1 + " vs. " + activity.pattern2;
+	        }
+	      };
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { id: 'lesson-plan-all' },
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'lesson-plan-date' },
+	          ' ',
+	          this._timestampToDate(plan.date),
+	          ' '
+	        ),
+	        _react2.default.createElement(
+	          'h2',
+	          { id: 'lesson-plan-title' },
+	          'Phonics: ',
+	          plan.title
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'section-title' },
+	          'Revisiting Familiar Texts:'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'section-details' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Book Titles:'
+	            ),
+	            ' ',
+	            _react2.default.createElement(
+	              'i',
+	              null,
+	              plan.rereadingBooks.join(", ")
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'section-title' },
+	          'Word Study:'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'section-details' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Word bank activity:'
+	            ),
+	            ' ',
+	            renderWordBankActivity(plan.wordBankActivity)
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Phonics activity:'
+	            ),
+	            ' ',
+	            renderPhonicsActivity(plan.phonicsActivity)
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'section-title' },
+	          'New Reading / Sharing a Book:'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'section-details' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Book Title:'
+	            ),
+	            ' ',
+	            _react2.default.createElement(
+	              'i',
+	              null,
+	              plan.brandNewReadingBook
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Introduction:'
+	            ),
+	            ' Picture walk through the book, asking questions about what might happen.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'During reading:'
+	            ),
+	            ' Make sure your student is pointing to the words as they read! Ask comprehension questions as you go along together.'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'After reading:'
+	            ),
+	            ' Ask for a summary of what happened in the book. Have them point out their favorite page!'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'section-title' },
+	          'Communication:'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'section-details' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'sub-section-header' },
+	              'Notes:'
+	            ),
+	            ' ',
+	            plan.communicationActivity.notes
+	          )
+	        ),
+	        renderNotes(plan)
+	      );
+	    }
+	  }]);
+	
+	  return LessonPlanDetail;
+	}(_react2.default.Component);
+	
+	exports.default = LessonPlanDetail;
+
+/***/ },
+/* 163 */
 /*!***************************************!*\
   !*** ./~/reactfire/dist/reactfire.js ***!
   \***************************************/
@@ -21026,68 +21465,21 @@
 
 
 /***/ },
-/* 163 */
-/*!*********************************************!*\
-  !*** ./src/client/app/LessonPlanDetail.jsx ***!
-  \*********************************************/
-/***/ function(module, exports, __webpack_require__) {
+/* 164 */
+/*!*************************************!*\
+  !*** ./src/client/app/constants.js ***!
+  \*************************************/
+/***/ function(module, exports) {
 
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var LessonPlanDetail = function (_React$Component) {
-	  _inherits(LessonPlanDetail, _React$Component);
-	
-	  function LessonPlanDetail(props) {
-	    _classCallCheck(this, LessonPlanDetail);
-	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanDetail).call(this, props));
-	  }
-	
-	  _createClass(LessonPlanDetail, [{
-	    key: "render",
-	    value: function render() {
-	      var plan = this.props.plan;
-	      console.log(plan);
-	      return _react2.default.createElement(
-	        "div",
-	        null,
-	        _react2.default.createElement(
-	          "h2",
-	          null,
-	          plan.title
-	        ),
-	        _react2.default.createElement(
-	          "div",
-	          null,
-	          "Books to re-read: ",
-	          plan.rereadingBooks.join(", ")
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return LessonPlanDetail;
-	}(_react2.default.Component);
-	
-	exports.default = LessonPlanDetail;
+	exports.default = {
+		PhonicsPatterns: ["Mm /m/", "Ss /s/", "Bb /b/", "Rr /r/", "Pp /p/", "Nn /n/", "Tt /t/", "Gg /g/", "Cc /k/", "Ff /f/", "Dd /d/", "Hh /h/", "Jj /j/", "Ll /l/", "Kk /k/", "Ww /w/ /wh/", "Xx /ks/", "Qq /kw/", "Vv /v/", "Yy /y/", "Zz /z/", "Short /a/ (CaC)", "Short /i/ (CiC)", "Short /o/ (CoC)", "Short /e/ (CeC)", "Short /u/ (CuC)", "S-Blends", "L-Blends", "R-Blends", "/sh/ digraph", "/ch/ digraph", "/th/ digraph", "/ck/ digraph", "Long /a/ (CaCe)", "Long /i/ (CiCe)", "Long /o/ (CoCe)", "Long /e/ (CeCe)", "Long /u/ (CuCe)", "/ee/ vowel team", "/ea/ vowel team", "/oa/ vowel team", "/ai/ vowel team", "/ay/ vowel team", "R-controlled a /ar/", "R-controlled i /ir/", "R-controlled o /or/", "R-controlled e /er/", "R-controlled u /ur/", "/oi/ diphthong", "/oy/ diphthong", "/ou/ diphthong", "/ow/ diphthong", "/au/ diphthong", "/aw/ diphthong"],
+		LetterTilesWordLists: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["sad", "sat", "mat", "mad", "sad", "sand", "and", "ant", "sat", "sad"], ["ham", "him", "hit", "him", "hid", "had", "ham", "him", "dim", "did", "dad"], ["dog", "dig", "hit", "hot", "got", "dot", "dog", "dig", "dog", "hog", "hot", "hat", "hit"], ["pet", "pot", "pet", "pest", "pet", "pat", "pot", "spot", "pot", "pat", "past", "pat", "pet", "pest"], ["rush", "rash", "cash", "rash", "rush", "cut", "shut", "cut", "cup", "cop", "shop", "top"], ["stop", "scab", "snap", "span", "scan", "small", "spell", "still", "swell", "scar", "skin", "spin", "stir", "strip", "sprint", "splint"], ["blink", "clink", "clap", "flap", "flag", "glad", "glob", "plod", "plug", "slug", "slip", "blip", "flip"], ["trap", "trip", "drip", "grip", "grin", "gram", "from", "crop", "crust", "brat", "brand", "grand", "grass", "press"], ["ship", "shin", "ship", "fish", "fin", "fish", "dish", "fish", "fin", "in", "ship"], ["chip", "chin", "chip", "chin", "in", "inch", "pinch", "punch", "lunch", "munch", "much"], ["path", "thin", "pin", "pan", "path", "bath", "path", "pat", "pit", "pin", "thin"], ["kid", "kick", "kid", "kick", "sick", "sack", "shack", "sack", "sash", "sack", "stack", "stick", "sick", "kick"], ["mate", "make", "gate", "gape", "gap", "tap", "tape", "tap", "tam", "tame", "make", "made", "mad", "man", "pan", "pane"], ["dime", "dive", "fine", "fin", "five", "fine", "dine", "dime", "dim", "dime", "time", "tim", "tip", "rip", "ripe"], ["hope", "hop", "hope", "mope", "mop", "hop", "hope", "cope", "code", "rode", "role", "pole", "mole", "mope", "mop"], ["eve", "cede", "gene", "pete", "scene", "these", "theme", "eve", "even"], ["cut", "cute", "cut", "mute", "cut", "cute", "cube", "cub", "cube", "tube", "tub", "rub", "cub", "cube"], ["seed", "see", "set", "seed", "need", "net", "need", "needs", "seed", "sheep", "sheet"], ["seat", "sat", "mat", "meat", "eat", "seat", "sea", "net", "neat", "heat", "seat", "sea", "steam", "teach", "beach"], ["got", "goat", "got", "goat", "road", "rod", "road", "roast", "toast", "toad", "load", "loan", "oak", "soak", "cloak"], ["ran", "rain", "pain", "pan", "man", "main", "maid", "rain", "ran", "train", "rain", "ran", "pan", "pain"], ["may", "main", "pay", "paid", "maid", "laid", "lay", "stay", "play", "lad", "bat", "bait", "bat", "bay", "maid", "mad", "may", "main"], ["star", "cart", "art", "arm", "farm", "far", "car", "cart", "dart", "dark", "mark", "spark", "park", "part"], ["bird", "birth", "bird", "third", "thirst", "first", "firm", "fir", "sir", "stir", "skirt", "dirt", "smirk", "irk"], ["sport", "port", "fort", "torn", "sort", "for", "fork", "fort", "form", "corn", "port", "sport"], ["her", "herd", "her", "herd", "clerk", "per", "perk", "jerk", "clerk", "herd", "nerd"], ["fur", "hurt", "fur", "turn", "burn", "churn", "burn", "burnt", "hurt", "blur", "blurt", "hurt", "hurl", "churn"], ["join", "joint", "coin", "coil", "point", "moist", "noise", "oil", "boil", "spoil", "soil"], ["coy", "roy", "soy", "boy", "joy", "toy", "troy", "ploy", "coy", "boy", "toy"], ["sour", "flour", "scout", "pout", "sprout", "proud", "round", "pound", "loud", "count", "couch", "south"], ["now", "bow", "plow", "prowl", "scowl", "gown", "down", "town", "clown", "cow"], ["auto", "author", "audio", "faucet", "caught", "taut", "fault", "vault", "cause", "because"], ["saw", "paw", "law", "claw", "crawl", "shawl", "straw", "thaw", "dawn", "lawn", "yawn", "hawk"]]
+	};
 
 /***/ }
 /******/ ]);

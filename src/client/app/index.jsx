@@ -19,23 +19,35 @@ const App = React.createClass({
   	this.setState({selectedPlan: plan});
   },
 
+  deleteLessonPlan: function(key) {
+    this.firebaseRefs["lessonPlans"].child(key).remove();
+    if (this.state.selectedPlan && this.state.selectedPlan['.key'] === key) {
+    	this.setState({selectedPlan: undefined});
+    }
+  },
+
   render() {
   	var renderPlan = function(plan) {
   		if (plan) {
   			return <LessonPlanDetail plan={plan} />;
   		} else {
-  			return "Nothing here!";
+  			return "Click to see a lesson plan!";
   		}
   	};
     return  (
     	<div>
-		    <div id="topbar">
-		    	<h3 className="pull-left"> Ravenswood Reads Lesson Planner </h3>
-		    	<button className="createButton pull-right"> + </button>
-		    </div>
+			<table id="topbar">
+			<tbody>
+			<tr>
+		    	<td width="250px"> <img id="current-child-picture" src="./public/BabyLucas.jpg" /> <span id="current-child-name">Lucas T. <span className="glyphicon glyphicon-menu-down"></span></span></td>
+		    	<td className="header-title"> Ravenswood Reads Lesson Planner </td>
+		    	<td width="250px"><div className="create-button pull-right"> + </div></td>
+		    	</tr>
+		    </tbody>
+		    </table>
 
 		    <div id="sidebar">
-		    	<LessonsSidebarComponent handleClick={this.setSelectedPlan} plans={this.state.lessonPlans} />
+		    	<LessonsSidebarComponent handleClick={this.setSelectedPlan} handleDelete={this.deleteLessonPlan} selectedPlan={this.state.selectedPlan} plans={this.state.lessonPlans} />
 		    </div>
 		    <div id="content">
 		    	{renderPlan(this.state.selectedPlan)}

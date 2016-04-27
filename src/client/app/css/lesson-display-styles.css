@@ -1,0 +1,43 @@
+#lesson-plan-all {
+	background-color: white;
+	margin-top: 0;
+	padding: 30px;
+}
+
+#lesson-plan-date {
+	font-weight: 300;
+	font-size: 18px;
+	color: rgba(74, 74, 74, 1);
+	text-align: left;
+}
+
+#lesson-plan-title {
+	margin-top: 0;
+	font-weight: 300;
+	font-size: 30px;
+	color: rgba(74, 74, 74, 1);
+	text-align: left;
+}
+
+.section-title {
+	text-decoration: underline;
+	font-size: 18px;
+	color: rgba(74, 74, 74, 1);
+	text-align: left;
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+
+.section-details {
+	font-weight: 300;
+	font-size: 16px;
+	color: rgba(74, 74, 74, 1);
+}
+
+.section-details li {
+	padding-bottom: 2px;
+}
+
+.sub-section-header {
+	font-weight: 400;
+}
