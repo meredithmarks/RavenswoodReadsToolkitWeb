@@ -71,7 +71,7 @@
 	
 	var _LessonPlanDetail2 = _interopRequireDefault(_LessonPlanDetail);
 	
-	var _reactfire = __webpack_require__(/*! reactfire */ 163);
+	var _reactfire = __webpack_require__(/*! reactfire */ 164);
 	
 	var _reactfire2 = _interopRequireDefault(_reactfire);
 	
@@ -93,27 +93,29 @@
 	  },
 	
 	  deleteLessonPlan: function deleteLessonPlan(key) {
-	    // var firebaseRef = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
 	    this.firebaseRefs["lessonPlans"].child(key).remove();
 	    if (this.state.selectedPlan && this.state.selectedPlan['.key'] === key) {
 	      this.setState({ selectedPlan: undefined });
 	    }
-	    // onClick={ _this.props.removeItem.bind(null, item['.key']) }
-	    // var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
-	    // ref.on('value', function(dataSnapshot) {
-	    //   var items = [];
-	    //   dataSnapshot.forEach(function(childSnapshot) {
-	    //     var item = childSnapshot.val();
-	    //     item['.key'] = childSnapshot.key();
-	    //     items.push(item);
-	    //   }.bind(this));
-	
-	    //   this.setState({
-	    //     lessonPlans: items
-	    //   });
-	    // }.bind(this));
 	  },
 	
+	  handleSignIn: function handleSignIn(event) {
+	    var self = this;
+	    this.firebaseRefs["lessonPlans"].authWithOAuthPopup("google", function (error, authData) {
+	      if (error) {
+	        console.log("Login Failed!", error);
+	      } else {
+	        self.setState(self.state);
+	        console.log("Authenticated successfully with payload:", authData);
+	      }
+	    }, {
+	      scope: "email"
+	    });
+	  },
+	  handleSignOut: function handleSignOut(event) {
+	    this.firebaseRefs["lessonPlans"].unauth();
+	    this.setState(this.state);
+	  },
 	  render: function render() {
 	    var renderPlan = function renderPlan(plan) {
 	      if (plan) {
@@ -122,59 +124,83 @@
 	        return "Click to see a lesson plan!";
 	      }
 	    };
-	    return _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'table',
-	        { id: 'topbar' },
+	    var authData = this.firebaseRefs["lessonPlans"].getAuth();
+	    if (authData) {
+	      console.log("User " + authData.uid + " is logged in with " + authData.provider);
+	      return _react2.default.createElement(
+	        'div',
+	        null,
 	        _react2.default.createElement(
-	          'tbody',
-	          null,
+	          'table',
+	          { className: 'topbar' },
 	          _react2.default.createElement(
-	            'tr',
+	            'tbody',
 	            null,
 	            _react2.default.createElement(
-	              'td',
-	              { width: '250px' },
-	              ' ',
-	              _react2.default.createElement('img', { id: 'current-child-picture', src: './public/BabyLucas.jpg' }),
-	              ' ',
+	              'tr',
+	              null,
 	              _react2.default.createElement(
-	                'span',
-	                { id: 'current-child-name' },
-	                'Lucas T. ',
-	                _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' })
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'td',
-	              { className: 'header-title' },
-	              ' Ravenswood Reads Lesson Planner '
-	            ),
-	            _react2.default.createElement(
-	              'td',
-	              { width: '250px' },
+	                'td',
+	                { width: '300px' },
+	                ' ',
+	                _react2.default.createElement('img', { id: 'current-child-picture', src: './public/BabyLucas.jpg' }),
+	                _react2.default.createElement(
+	                  'span',
+	                  { id: 'current-child-name' },
+	                  'Lucas T. ',
+	                  _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' })
+	                ),
+	                _react2.default.createElement(
+	                  'span',
+	                  { id: 'logout-button', onClick: this.handleSignOut },
+	                  'Logout'
+	                )
+	              ),
 	              _react2.default.createElement(
-	                'div',
-	                { className: 'create-button pull-right' },
-	                ' + '
+	                'td',
+	                { className: 'header-title' },
+	                ' Ravenswood Reads Lesson Planner '
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                { width: '250px' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'create-button pull-right' },
+	                  ' + '
+	                )
 	              )
 	            )
 	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'sidebar' },
+	          _react2.default.createElement(_LessonsSidebarComponent2.default, { handleClick: this.setSelectedPlan, handleDelete: this.deleteLessonPlan, selectedPlan: this.state.selectedPlan, plans: this.state.lessonPlans })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'content' },
+	          renderPlan(this.state.selectedPlan)
 	        )
-	      ),
-	      _react2.default.createElement(
+	      );
+	    } else {
+	      console.log("User is logged out");
+	      return _react2.default.createElement(
 	        'div',
-	        { id: 'sidebar' },
-	        _react2.default.createElement(_LessonsSidebarComponent2.default, { handleClick: this.setSelectedPlan, handleDelete: this.deleteLessonPlan, selectedPlan: this.state.selectedPlan, plans: this.state.lessonPlans })
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { id: 'content' },
-	        renderPlan(this.state.selectedPlan)
-	      )
-	    );
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'login-title' },
+	          ' Ravenswood Reads Toolkit '
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { type: 'button', id: 'login-button', className: 'btn btn-primary btn-lg', onClick: this.handleSignIn },
+	          'Sign In with Google'
+	        )
+	      );
+	    }
 	  }
 	});
 	
@@ -20789,7 +20815,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _constants = __webpack_require__(/*! ./constants */ 164);
+	var _constants = __webpack_require__(/*! ./constants */ 163);
 	
 	var _constants2 = _interopRequireDefault(_constants);
 	
@@ -21092,6 +21118,23 @@
 
 /***/ },
 /* 163 */
+/*!*************************************!*\
+  !*** ./src/client/app/constants.js ***!
+  \*************************************/
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = {
+		PhonicsPatterns: ["Mm /m/", "Ss /s/", "Bb /b/", "Rr /r/", "Pp /p/", "Nn /n/", "Tt /t/", "Gg /g/", "Cc /k/", "Ff /f/", "Dd /d/", "Hh /h/", "Jj /j/", "Ll /l/", "Kk /k/", "Ww /w/ /wh/", "Xx /ks/", "Qq /kw/", "Vv /v/", "Yy /y/", "Zz /z/", "Short /a/ (CaC)", "Short /i/ (CiC)", "Short /o/ (CoC)", "Short /e/ (CeC)", "Short /u/ (CuC)", "S-Blends", "L-Blends", "R-Blends", "/sh/ digraph", "/ch/ digraph", "/th/ digraph", "/ck/ digraph", "Long /a/ (CaCe)", "Long /i/ (CiCe)", "Long /o/ (CoCe)", "Long /e/ (CeCe)", "Long /u/ (CuCe)", "/ee/ vowel team", "/ea/ vowel team", "/oa/ vowel team", "/ai/ vowel team", "/ay/ vowel team", "R-controlled a /ar/", "R-controlled i /ir/", "R-controlled o /or/", "R-controlled e /er/", "R-controlled u /ur/", "/oi/ diphthong", "/oy/ diphthong", "/ou/ diphthong", "/ow/ diphthong", "/au/ diphthong", "/aw/ diphthong"],
+		LetterTilesWordLists: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["sad", "sat", "mat", "mad", "sad", "sand", "and", "ant", "sat", "sad"], ["ham", "him", "hit", "him", "hid", "had", "ham", "him", "dim", "did", "dad"], ["dog", "dig", "hit", "hot", "got", "dot", "dog", "dig", "dog", "hog", "hot", "hat", "hit"], ["pet", "pot", "pet", "pest", "pet", "pat", "pot", "spot", "pot", "pat", "past", "pat", "pet", "pest"], ["rush", "rash", "cash", "rash", "rush", "cut", "shut", "cut", "cup", "cop", "shop", "top"], ["stop", "scab", "snap", "span", "scan", "small", "spell", "still", "swell", "scar", "skin", "spin", "stir", "strip", "sprint", "splint"], ["blink", "clink", "clap", "flap", "flag", "glad", "glob", "plod", "plug", "slug", "slip", "blip", "flip"], ["trap", "trip", "drip", "grip", "grin", "gram", "from", "crop", "crust", "brat", "brand", "grand", "grass", "press"], ["ship", "shin", "ship", "fish", "fin", "fish", "dish", "fish", "fin", "in", "ship"], ["chip", "chin", "chip", "chin", "in", "inch", "pinch", "punch", "lunch", "munch", "much"], ["path", "thin", "pin", "pan", "path", "bath", "path", "pat", "pit", "pin", "thin"], ["kid", "kick", "kid", "kick", "sick", "sack", "shack", "sack", "sash", "sack", "stack", "stick", "sick", "kick"], ["mate", "make", "gate", "gape", "gap", "tap", "tape", "tap", "tam", "tame", "make", "made", "mad", "man", "pan", "pane"], ["dime", "dive", "fine", "fin", "five", "fine", "dine", "dime", "dim", "dime", "time", "tim", "tip", "rip", "ripe"], ["hope", "hop", "hope", "mope", "mop", "hop", "hope", "cope", "code", "rode", "role", "pole", "mole", "mope", "mop"], ["eve", "cede", "gene", "pete", "scene", "these", "theme", "eve", "even"], ["cut", "cute", "cut", "mute", "cut", "cute", "cube", "cub", "cube", "tube", "tub", "rub", "cub", "cube"], ["seed", "see", "set", "seed", "need", "net", "need", "needs", "seed", "sheep", "sheet"], ["seat", "sat", "mat", "meat", "eat", "seat", "sea", "net", "neat", "heat", "seat", "sea", "steam", "teach", "beach"], ["got", "goat", "got", "goat", "road", "rod", "road", "roast", "toast", "toad", "load", "loan", "oak", "soak", "cloak"], ["ran", "rain", "pain", "pan", "man", "main", "maid", "rain", "ran", "train", "rain", "ran", "pan", "pain"], ["may", "main", "pay", "paid", "maid", "laid", "lay", "stay", "play", "lad", "bat", "bait", "bat", "bay", "maid", "mad", "may", "main"], ["star", "cart", "art", "arm", "farm", "far", "car", "cart", "dart", "dark", "mark", "spark", "park", "part"], ["bird", "birth", "bird", "third", "thirst", "first", "firm", "fir", "sir", "stir", "skirt", "dirt", "smirk", "irk"], ["sport", "port", "fort", "torn", "sort", "for", "fork", "fort", "form", "corn", "port", "sport"], ["her", "herd", "her", "herd", "clerk", "per", "perk", "jerk", "clerk", "herd", "nerd"], ["fur", "hurt", "fur", "turn", "burn", "churn", "burn", "burnt", "hurt", "blur", "blurt", "hurt", "hurl", "churn"], ["join", "joint", "coin", "coil", "point", "moist", "noise", "oil", "boil", "spoil", "soil"], ["coy", "roy", "soy", "boy", "joy", "toy", "troy", "ploy", "coy", "boy", "toy"], ["sour", "flour", "scout", "pout", "sprout", "proud", "round", "pound", "loud", "count", "couch", "south"], ["now", "bow", "plow", "prowl", "scowl", "gown", "down", "town", "clown", "cow"], ["auto", "author", "audio", "faucet", "caught", "taut", "fault", "vault", "cause", "because"], ["saw", "paw", "law", "claw", "crawl", "shawl", "straw", "thaw", "dawn", "lawn", "yawn", "hawk"]]
+	};
+
+/***/ },
+/* 164 */
 /*!***************************************!*\
   !*** ./~/reactfire/dist/reactfire.js ***!
   \***************************************/
@@ -21463,23 +21506,6 @@
 	  return ReactFireMixin;
 	}));
 
-
-/***/ },
-/* 164 */
-/*!*************************************!*\
-  !*** ./src/client/app/constants.js ***!
-  \*************************************/
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.default = {
-		PhonicsPatterns: ["Mm /m/", "Ss /s/", "Bb /b/", "Rr /r/", "Pp /p/", "Nn /n/", "Tt /t/", "Gg /g/", "Cc /k/", "Ff /f/", "Dd /d/", "Hh /h/", "Jj /j/", "Ll /l/", "Kk /k/", "Ww /w/ /wh/", "Xx /ks/", "Qq /kw/", "Vv /v/", "Yy /y/", "Zz /z/", "Short /a/ (CaC)", "Short /i/ (CiC)", "Short /o/ (CoC)", "Short /e/ (CeC)", "Short /u/ (CuC)", "S-Blends", "L-Blends", "R-Blends", "/sh/ digraph", "/ch/ digraph", "/th/ digraph", "/ck/ digraph", "Long /a/ (CaCe)", "Long /i/ (CiCe)", "Long /o/ (CoCe)", "Long /e/ (CeCe)", "Long /u/ (CuCe)", "/ee/ vowel team", "/ea/ vowel team", "/oa/ vowel team", "/ai/ vowel team", "/ay/ vowel team", "R-controlled a /ar/", "R-controlled i /ir/", "R-controlled o /or/", "R-controlled e /er/", "R-controlled u /ur/", "/oi/ diphthong", "/oy/ diphthong", "/ou/ diphthong", "/ow/ diphthong", "/au/ diphthong", "/aw/ diphthong"],
-		LetterTilesWordLists: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["sad", "sat", "mat", "mad", "sad", "sand", "and", "ant", "sat", "sad"], ["ham", "him", "hit", "him", "hid", "had", "ham", "him", "dim", "did", "dad"], ["dog", "dig", "hit", "hot", "got", "dot", "dog", "dig", "dog", "hog", "hot", "hat", "hit"], ["pet", "pot", "pet", "pest", "pet", "pat", "pot", "spot", "pot", "pat", "past", "pat", "pet", "pest"], ["rush", "rash", "cash", "rash", "rush", "cut", "shut", "cut", "cup", "cop", "shop", "top"], ["stop", "scab", "snap", "span", "scan", "small", "spell", "still", "swell", "scar", "skin", "spin", "stir", "strip", "sprint", "splint"], ["blink", "clink", "clap", "flap", "flag", "glad", "glob", "plod", "plug", "slug", "slip", "blip", "flip"], ["trap", "trip", "drip", "grip", "grin", "gram", "from", "crop", "crust", "brat", "brand", "grand", "grass", "press"], ["ship", "shin", "ship", "fish", "fin", "fish", "dish", "fish", "fin", "in", "ship"], ["chip", "chin", "chip", "chin", "in", "inch", "pinch", "punch", "lunch", "munch", "much"], ["path", "thin", "pin", "pan", "path", "bath", "path", "pat", "pit", "pin", "thin"], ["kid", "kick", "kid", "kick", "sick", "sack", "shack", "sack", "sash", "sack", "stack", "stick", "sick", "kick"], ["mate", "make", "gate", "gape", "gap", "tap", "tape", "tap", "tam", "tame", "make", "made", "mad", "man", "pan", "pane"], ["dime", "dive", "fine", "fin", "five", "fine", "dine", "dime", "dim", "dime", "time", "tim", "tip", "rip", "ripe"], ["hope", "hop", "hope", "mope", "mop", "hop", "hope", "cope", "code", "rode", "role", "pole", "mole", "mope", "mop"], ["eve", "cede", "gene", "pete", "scene", "these", "theme", "eve", "even"], ["cut", "cute", "cut", "mute", "cut", "cute", "cube", "cub", "cube", "tube", "tub", "rub", "cub", "cube"], ["seed", "see", "set", "seed", "need", "net", "need", "needs", "seed", "sheep", "sheet"], ["seat", "sat", "mat", "meat", "eat", "seat", "sea", "net", "neat", "heat", "seat", "sea", "steam", "teach", "beach"], ["got", "goat", "got", "goat", "road", "rod", "road", "roast", "toast", "toad", "load", "loan", "oak", "soak", "cloak"], ["ran", "rain", "pain", "pan", "man", "main", "maid", "rain", "ran", "train", "rain", "ran", "pan", "pain"], ["may", "main", "pay", "paid", "maid", "laid", "lay", "stay", "play", "lad", "bat", "bait", "bat", "bay", "maid", "mad", "may", "main"], ["star", "cart", "art", "arm", "farm", "far", "car", "cart", "dart", "dark", "mark", "spark", "park", "part"], ["bird", "birth", "bird", "third", "thirst", "first", "firm", "fir", "sir", "stir", "skirt", "dirt", "smirk", "irk"], ["sport", "port", "fort", "torn", "sort", "for", "fork", "fort", "form", "corn", "port", "sport"], ["her", "herd", "her", "herd", "clerk", "per", "perk", "jerk", "clerk", "herd", "nerd"], ["fur", "hurt", "fur", "turn", "burn", "churn", "burn", "burnt", "hurt", "blur", "blurt", "hurt", "hurl", "churn"], ["join", "joint", "coin", "coil", "point", "moist", "noise", "oil", "boil", "spoil", "soil"], ["coy", "roy", "soy", "boy", "joy", "toy", "troy", "ploy", "coy", "boy", "toy"], ["sour", "flour", "scout", "pout", "sprout", "proud", "round", "pound", "loud", "count", "couch", "south"], ["now", "bow", "plow", "prowl", "scowl", "gown", "down", "town", "clown", "cow"], ["auto", "author", "audio", "faucet", "caught", "taut", "fault", "vault", "cause", "because"], ["saw", "paw", "law", "claw", "crawl", "shawl", "straw", "thaw", "dawn", "lawn", "yawn", "hawk"]]
-	};
 
 /***/ }
 /******/ ]);

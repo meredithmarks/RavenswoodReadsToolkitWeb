@@ -1,4 +1,4 @@
-#topbar {
+.topbar {
 	/* positioning */
 	position: absolute;
 	top: 0px;
@@ -51,6 +51,36 @@
 	color: white;
 	text-align: left;
 	vertical-align: middle;
+}
+
+#login-title {
+	color: rgba(74, 144, 226, 1);
+	position: absolute;
+	text-align: center;
+    vertical-align: middle;
+	font-weight: 500;
+	font-size: 30px;
+	top: 50%;
+	left: 50%;
+	margin-top: -100px;
+	margin-left: -190px;
+}
+
+#login-button {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -105px;
+}
+
+#logout-button {
+	font-weight: 300;
+	font-size: 22px;
+	color: white;
+	text-align: left;
+	vertical-align: middle;
+	padding-left: 10px;
 }
 
 .glyphicon-menu-down {
