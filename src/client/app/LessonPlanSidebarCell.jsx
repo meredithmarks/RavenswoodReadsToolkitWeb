@@ -31,9 +31,13 @@ class LessonPlanSidebarCell extends React.Component {
   render() {
     var classnames = "lesson-plan-sidebar-cell"
     if (this.props.selected) classnames += ' selected';
+    var deleteButton;
+    if (this.props.handleDelete) {
+      deleteButton = <div className="delete-plan-button" onClick={this.handleDelete}> &times; </div>;
+    }
     return (
         <div className={classnames} onClick={this.handleClick}>
-          <div className="delete-plan-button" onClick={this.handleDelete}> &times; </div>
+          { deleteButton }
           <div className="sidebar-lesson-plan-date"> {this._timestampToDate(this.state.plan.date)} </div>
           <div className="sidebar-lesson-plan-title"> {this.state.plan.title} </div>
         </div>

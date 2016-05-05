@@ -12,7 +12,7 @@ const App = React.createClass({
 
   componentWillMount: function() {
     var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
-    this.bindAsArray(ref, "lessonPlans");
+    this.bindAsArray(ref.limitToFirst(100), "lessonPlans");
   },
 
   setSelectedPlan: function(plan) {
@@ -46,6 +46,7 @@ const App = React.createClass({
   },
 
   render() {
+    this.state.lessonPlans.sort(function(a, b) { return  b['.key'] - a['.key']; });
   	var renderPlan = function(plan) {
   		if (plan) {
   			return <LessonPlanDetail plan={plan} />;

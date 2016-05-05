@@ -71,7 +71,7 @@
 	
 	var _LessonPlanDetail2 = _interopRequireDefault(_LessonPlanDetail);
 	
-	var _reactfire = __webpack_require__(/*! reactfire */ 164);
+	var _reactfire = __webpack_require__(/*! reactfire */ 163);
 	
 	var _reactfire2 = _interopRequireDefault(_reactfire);
 	
@@ -85,7 +85,7 @@
 	
 	  componentWillMount: function componentWillMount() {
 	    var ref = new _firebase2.default("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
-	    this.bindAsArray(ref, "lessonPlans");
+	    this.bindAsArray(ref.limitToFirst(100), "lessonPlans");
 	  },
 	
 	  setSelectedPlan: function setSelectedPlan(plan) {
@@ -117,6 +117,9 @@
 	    this.setState(this.state);
 	  },
 	  render: function render() {
+	    this.state.lessonPlans.sort(function (a, b) {
+	      return b['.key'] - a['.key'];
+	    });
 	    var renderPlan = function renderPlan(plan) {
 	      if (plan) {
 	        return _react2.default.createElement(_LessonPlanDetail2.default, { plan: plan });
@@ -20642,14 +20645,18 @@
 	    value: function render() {
 	      var classnames = "lesson-plan-sidebar-cell";
 	      if (this.props.selected) classnames += ' selected';
-	      return _react2.default.createElement(
-	        'div',
-	        { className: classnames, onClick: this.handleClick },
-	        _react2.default.createElement(
+	      var deleteButton;
+	      if (this.props.handleDelete) {
+	        deleteButton = _react2.default.createElement(
 	          'div',
 	          { className: 'delete-plan-button', onClick: this.handleDelete },
 	          ' × '
-	        ),
+	        );
+	      }
+	      return _react2.default.createElement(
+	        'div',
+	        { className: classnames, onClick: this.handleClick },
+	        deleteButton,
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'sidebar-lesson-plan-date' },
@@ -20726,6 +20733,17 @@
 	        }
 	      });
 	
+	      if (false) {
+	        // TODO: put this back in if possible
+	        var seeMoreButton = _react2.default.createElement(
+	          'div',
+	          { className: 'see-more-button' },
+	          ' ',
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' }),
+	          ' '
+	        );
+	      }
+	
 	      if (this.props.plans.length > 0) {
 	        return _react2.default.createElement(
 	          'div',
@@ -20733,13 +20751,7 @@
 	          _react2.default.createElement(
 	            'row',
 	            null,
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'see-more-button' },
-	              ' ',
-	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' }),
-	              ' '
-	            ),
+	            seeMoreButton,
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'header-cell' },
@@ -20758,13 +20770,7 @@
 	          _react2.default.createElement(
 	            'row',
 	            null,
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'see-more-button' },
-	              ' ',
-	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-down' }),
-	              ' '
-	            ),
+	            seeMoreButton,
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'header-cell' },
@@ -20776,7 +20782,7 @@
 	              'row',
 	              null,
 	              ' ',
-	              _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan['.key'], selected: this.props.selectedPlan === plan, lessonPlan: plan, handleClick: this.props.handleClick, handleDelete: this.props.handleDelete, className: 'LessonPlanSidebarCell' }),
+	              _react2.default.createElement(_LessonPlanSidebarCell2.default, { key: plan['.key'], selected: this.props.selectedPlan === plan, lessonPlan: plan, handleClick: this.props.handleClick, className: 'LessonPlanSidebarCell' }),
 	              ' '
 	            );
 	          }.bind(this))
@@ -20815,7 +20821,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _constants = __webpack_require__(/*! ./constants */ 163);
+	var _constants = __webpack_require__(/*! ./constants */ 164);
 	
 	var _constants2 = _interopRequireDefault(_constants);
 	
@@ -20833,7 +20839,10 @@
 	  function LessonPlanDetail(props) {
 	    _classCallCheck(this, LessonPlanDetail);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanDetail).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LessonPlanDetail).call(this, props));
+	
+	    _this.mailto = _this.mailto.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(LessonPlanDetail, [{
@@ -20850,10 +20859,14 @@
 	      return day + ', ' + month + ' ' + date + ', ' + year;
 	    }
 	  }, {
+	    key: 'mailto',
+	    value: function mailto() {
+	      window.open('mailto:?subject=Ravenswood Reads Lesson:' + document.getElementById('lesson-plan-date').textContent + '&body=' + encodeURIComponent(document.getElementById('lesson-plan-all').textContent));
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var plan = this.props.plan;
-	      console.log(plan);
 	
 	      var renderNotes = function renderNotes(plan) {
 	        if (plan.completed) {
@@ -20924,7 +20937,10 @@
 	                ', '
 	              );
 	            }
-	          })
+	          }),
+	          _react2.default.createElement('br', null),
+	          ' — ',
+	          activity.notes
 	        );
 	      };
 	
@@ -20945,25 +20961,46 @@
 	            break;
 	        }
 	
+	        var description;
 	        if (activity.pattern2 === "") {
 	          if (activity.game == 2) {
 	            // letter tiles
 	            if (activity.otherDescription === "") {
 	              // non-custom
-	              return game + activity.pattern1 + ": " + _constants2.default.LetterTilesWordLists[_constants2.default.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
+	              description = game + activity.pattern1 + ": " + _constants2.default.LetterTilesWordLists[_constants2.default.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
 	            } else {
-	              return game + activity.otherDescription.replace(/\n/g, ", ");
+	              description = game + activity.otherDescription.replace(/\n/g, ", ");
 	            }
 	          }
-	          return game + activity.pattern1;
+	          description = game + activity.pattern1;
 	        } else {
-	          return game + activity.pattern1 + " vs. " + activity.pattern2;
+	          description = game + activity.pattern1 + " vs. " + activity.pattern2;
 	        }
+	        return _react2.default.createElement(
+	          'span',
+	          null,
+	          description,
+	          ' ',
+	          _react2.default.createElement('br', null),
+	          ' — ',
+	          activity.notes,
+	          ' '
+	        );
 	      };
 	
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'lesson-plan-all' },
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'action-icons' },
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-send', onClick: this.mailto }),
+	          _react2.default.createElement(
+	            'a',
+	            { href: 'javascript:window.print()' },
+	            _react2.default.createElement('span', { className: 'glyphicon glyphicon-print' })
+	          )
+	        ),
 	        _react2.default.createElement(
 	          'div',
 	          { id: 'lesson-plan-date' },
@@ -21118,23 +21155,6 @@
 
 /***/ },
 /* 163 */
-/*!*************************************!*\
-  !*** ./src/client/app/constants.js ***!
-  \*************************************/
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.default = {
-		PhonicsPatterns: ["Mm /m/", "Ss /s/", "Bb /b/", "Rr /r/", "Pp /p/", "Nn /n/", "Tt /t/", "Gg /g/", "Cc /k/", "Ff /f/", "Dd /d/", "Hh /h/", "Jj /j/", "Ll /l/", "Kk /k/", "Ww /w/ /wh/", "Xx /ks/", "Qq /kw/", "Vv /v/", "Yy /y/", "Zz /z/", "Short /a/ (CaC)", "Short /i/ (CiC)", "Short /o/ (CoC)", "Short /e/ (CeC)", "Short /u/ (CuC)", "S-Blends", "L-Blends", "R-Blends", "/sh/ digraph", "/ch/ digraph", "/th/ digraph", "/ck/ digraph", "Long /a/ (CaCe)", "Long /i/ (CiCe)", "Long /o/ (CoCe)", "Long /e/ (CeCe)", "Long /u/ (CuCe)", "/ee/ vowel team", "/ea/ vowel team", "/oa/ vowel team", "/ai/ vowel team", "/ay/ vowel team", "R-controlled a /ar/", "R-controlled i /ir/", "R-controlled o /or/", "R-controlled e /er/", "R-controlled u /ur/", "/oi/ diphthong", "/oy/ diphthong", "/ou/ diphthong", "/ow/ diphthong", "/au/ diphthong", "/aw/ diphthong"],
-		LetterTilesWordLists: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["sad", "sat", "mat", "mad", "sad", "sand", "and", "ant", "sat", "sad"], ["ham", "him", "hit", "him", "hid", "had", "ham", "him", "dim", "did", "dad"], ["dog", "dig", "hit", "hot", "got", "dot", "dog", "dig", "dog", "hog", "hot", "hat", "hit"], ["pet", "pot", "pet", "pest", "pet", "pat", "pot", "spot", "pot", "pat", "past", "pat", "pet", "pest"], ["rush", "rash", "cash", "rash", "rush", "cut", "shut", "cut", "cup", "cop", "shop", "top"], ["stop", "scab", "snap", "span", "scan", "small", "spell", "still", "swell", "scar", "skin", "spin", "stir", "strip", "sprint", "splint"], ["blink", "clink", "clap", "flap", "flag", "glad", "glob", "plod", "plug", "slug", "slip", "blip", "flip"], ["trap", "trip", "drip", "grip", "grin", "gram", "from", "crop", "crust", "brat", "brand", "grand", "grass", "press"], ["ship", "shin", "ship", "fish", "fin", "fish", "dish", "fish", "fin", "in", "ship"], ["chip", "chin", "chip", "chin", "in", "inch", "pinch", "punch", "lunch", "munch", "much"], ["path", "thin", "pin", "pan", "path", "bath", "path", "pat", "pit", "pin", "thin"], ["kid", "kick", "kid", "kick", "sick", "sack", "shack", "sack", "sash", "sack", "stack", "stick", "sick", "kick"], ["mate", "make", "gate", "gape", "gap", "tap", "tape", "tap", "tam", "tame", "make", "made", "mad", "man", "pan", "pane"], ["dime", "dive", "fine", "fin", "five", "fine", "dine", "dime", "dim", "dime", "time", "tim", "tip", "rip", "ripe"], ["hope", "hop", "hope", "mope", "mop", "hop", "hope", "cope", "code", "rode", "role", "pole", "mole", "mope", "mop"], ["eve", "cede", "gene", "pete", "scene", "these", "theme", "eve", "even"], ["cut", "cute", "cut", "mute", "cut", "cute", "cube", "cub", "cube", "tube", "tub", "rub", "cub", "cube"], ["seed", "see", "set", "seed", "need", "net", "need", "needs", "seed", "sheep", "sheet"], ["seat", "sat", "mat", "meat", "eat", "seat", "sea", "net", "neat", "heat", "seat", "sea", "steam", "teach", "beach"], ["got", "goat", "got", "goat", "road", "rod", "road", "roast", "toast", "toad", "load", "loan", "oak", "soak", "cloak"], ["ran", "rain", "pain", "pan", "man", "main", "maid", "rain", "ran", "train", "rain", "ran", "pan", "pain"], ["may", "main", "pay", "paid", "maid", "laid", "lay", "stay", "play", "lad", "bat", "bait", "bat", "bay", "maid", "mad", "may", "main"], ["star", "cart", "art", "arm", "farm", "far", "car", "cart", "dart", "dark", "mark", "spark", "park", "part"], ["bird", "birth", "bird", "third", "thirst", "first", "firm", "fir", "sir", "stir", "skirt", "dirt", "smirk", "irk"], ["sport", "port", "fort", "torn", "sort", "for", "fork", "fort", "form", "corn", "port", "sport"], ["her", "herd", "her", "herd", "clerk", "per", "perk", "jerk", "clerk", "herd", "nerd"], ["fur", "hurt", "fur", "turn", "burn", "churn", "burn", "burnt", "hurt", "blur", "blurt", "hurt", "hurl", "churn"], ["join", "joint", "coin", "coil", "point", "moist", "noise", "oil", "boil", "spoil", "soil"], ["coy", "roy", "soy", "boy", "joy", "toy", "troy", "ploy", "coy", "boy", "toy"], ["sour", "flour", "scout", "pout", "sprout", "proud", "round", "pound", "loud", "count", "couch", "south"], ["now", "bow", "plow", "prowl", "scowl", "gown", "down", "town", "clown", "cow"], ["auto", "author", "audio", "faucet", "caught", "taut", "fault", "vault", "cause", "because"], ["saw", "paw", "law", "claw", "crawl", "shawl", "straw", "thaw", "dawn", "lawn", "yawn", "hawk"]]
-	};
-
-/***/ },
-/* 164 */
 /*!***************************************!*\
   !*** ./~/reactfire/dist/reactfire.js ***!
   \***************************************/
@@ -21506,6 +21526,23 @@
 	  return ReactFireMixin;
 	}));
 
+
+/***/ },
+/* 164 */
+/*!*************************************!*\
+  !*** ./src/client/app/constants.js ***!
+  \*************************************/
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = {
+		PhonicsPatterns: ["Mm /m/", "Ss /s/", "Bb /b/", "Rr /r/", "Pp /p/", "Nn /n/", "Tt /t/", "Gg /g/", "Cc /k/", "Ff /f/", "Dd /d/", "Hh /h/", "Jj /j/", "Ll /l/", "Kk /k/", "Ww /w/ /wh/", "Xx /ks/", "Qq /kw/", "Vv /v/", "Yy /y/", "Zz /z/", "Short /a/ (CaC)", "Short /i/ (CiC)", "Short /o/ (CoC)", "Short /e/ (CeC)", "Short /u/ (CuC)", "S-Blends", "L-Blends", "R-Blends", "/sh/ digraph", "/ch/ digraph", "/th/ digraph", "/ck/ digraph", "Long /a/ (CaCe)", "Long /i/ (CiCe)", "Long /o/ (CoCe)", "Long /e/ (CeCe)", "Long /u/ (CuCe)", "/ee/ vowel team", "/ea/ vowel team", "/oa/ vowel team", "/ai/ vowel team", "/ay/ vowel team", "R-controlled a /ar/", "R-controlled i /ir/", "R-controlled o /or/", "R-controlled e /er/", "R-controlled u /ur/", "/oi/ diphthong", "/oy/ diphthong", "/ou/ diphthong", "/ow/ diphthong", "/au/ diphthong", "/aw/ diphthong"],
+		LetterTilesWordLists: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["sad", "sat", "mat", "mad", "sad", "sand", "and", "ant", "sat", "sad"], ["ham", "him", "hit", "him", "hid", "had", "ham", "him", "dim", "did", "dad"], ["dog", "dig", "hit", "hot", "got", "dot", "dog", "dig", "dog", "hog", "hot", "hat", "hit"], ["pet", "pot", "pet", "pest", "pet", "pat", "pot", "spot", "pot", "pat", "past", "pat", "pet", "pest"], ["rush", "rash", "cash", "rash", "rush", "cut", "shut", "cut", "cup", "cop", "shop", "top"], ["stop", "scab", "snap", "span", "scan", "small", "spell", "still", "swell", "scar", "skin", "spin", "stir", "strip", "sprint", "splint"], ["blink", "clink", "clap", "flap", "flag", "glad", "glob", "plod", "plug", "slug", "slip", "blip", "flip"], ["trap", "trip", "drip", "grip", "grin", "gram", "from", "crop", "crust", "brat", "brand", "grand", "grass", "press"], ["ship", "shin", "ship", "fish", "fin", "fish", "dish", "fish", "fin", "in", "ship"], ["chip", "chin", "chip", "chin", "in", "inch", "pinch", "punch", "lunch", "munch", "much"], ["path", "thin", "pin", "pan", "path", "bath", "path", "pat", "pit", "pin", "thin"], ["kid", "kick", "kid", "kick", "sick", "sack", "shack", "sack", "sash", "sack", "stack", "stick", "sick", "kick"], ["mate", "make", "gate", "gape", "gap", "tap", "tape", "tap", "tam", "tame", "make", "made", "mad", "man", "pan", "pane"], ["dime", "dive", "fine", "fin", "five", "fine", "dine", "dime", "dim", "dime", "time", "tim", "tip", "rip", "ripe"], ["hope", "hop", "hope", "mope", "mop", "hop", "hope", "cope", "code", "rode", "role", "pole", "mole", "mope", "mop"], ["eve", "cede", "gene", "pete", "scene", "these", "theme", "eve", "even"], ["cut", "cute", "cut", "mute", "cut", "cute", "cube", "cub", "cube", "tube", "tub", "rub", "cub", "cube"], ["seed", "see", "set", "seed", "need", "net", "need", "needs", "seed", "sheep", "sheet"], ["seat", "sat", "mat", "meat", "eat", "seat", "sea", "net", "neat", "heat", "seat", "sea", "steam", "teach", "beach"], ["got", "goat", "got", "goat", "road", "rod", "road", "roast", "toast", "toad", "load", "loan", "oak", "soak", "cloak"], ["ran", "rain", "pain", "pan", "man", "main", "maid", "rain", "ran", "train", "rain", "ran", "pan", "pain"], ["may", "main", "pay", "paid", "maid", "laid", "lay", "stay", "play", "lad", "bat", "bait", "bat", "bay", "maid", "mad", "may", "main"], ["star", "cart", "art", "arm", "farm", "far", "car", "cart", "dart", "dark", "mark", "spark", "park", "part"], ["bird", "birth", "bird", "third", "thirst", "first", "firm", "fir", "sir", "stir", "skirt", "dirt", "smirk", "irk"], ["sport", "port", "fort", "torn", "sort", "for", "fork", "fort", "form", "corn", "port", "sport"], ["her", "herd", "her", "herd", "clerk", "per", "perk", "jerk", "clerk", "herd", "nerd"], ["fur", "hurt", "fur", "turn", "burn", "churn", "burn", "burnt", "hurt", "blur", "blurt", "hurt", "hurl", "churn"], ["join", "joint", "coin", "coil", "point", "moist", "noise", "oil", "boil", "spoil", "soil"], ["coy", "roy", "soy", "boy", "joy", "toy", "troy", "ploy", "coy", "boy", "toy"], ["sour", "flour", "scout", "pout", "sprout", "proud", "round", "pound", "loud", "count", "couch", "south"], ["now", "bow", "plow", "prowl", "scowl", "gown", "down", "town", "clown", "cow"], ["auto", "author", "audio", "faucet", "caught", "taut", "fault", "vault", "cause", "because"], ["saw", "paw", "law", "claw", "crawl", "shawl", "straw", "thaw", "dawn", "lawn", "yawn", "hawk"]]
+	};
 
 /***/ }
 /******/ ]);
