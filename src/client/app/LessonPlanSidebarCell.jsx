@@ -4,28 +4,39 @@ class LessonPlanSidebarCell extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {likesCount : 0, id: props.id};
-    this.onLike = this.onLike.bind(this);
+    this.state = {plan : props.lessonPlan};
+    this.handleClick = this.handleClick.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
-  onLike () {
-    let newLikesCount = this.state.likesCount + 1;
-    this.setState({likesCount: newLikesCount});
-    console.log(this.state.id);
+  _timestampToDate(timestamp) {
+    var a = new Date(timestamp * 1000);
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+
+    return month + ' ' + date + ', ' + year;
+  }
+
+  handleClick(event) {
+    this.props.handleClick(this.state.plan);
+  }
+
+  handleDelete(event) {
+    event.stopPropagation();
+    this.props.handleDelete(this.state.plan['.key']);
   }
 
   render() {
+    var classnames = "lesson-plan-sidebar-cell"
+    if (this.props.selected) classnames += ' selected';
     return (
-      // <div className="row"> 
-        <div className="LessonPlanSidebarCell">
-          <strong className="pull-left"> Wed, April 16 </strong>
-          <div className="pull-right"> /A/ </div>
+        <div className={classnames} onClick={this.handleClick}>
+          <div className="delete-plan-button" onClick={this.handleDelete}> &times; </div>
+          <div className="sidebar-lesson-plan-date"> {this._timestampToDate(this.state.plan.date)} </div>
+          <div className="sidebar-lesson-plan-title"> {this.state.plan.title} </div>
         </div>
-      // </div>
-
-
-      //   Likes : <span>{this.state.likesCount}</span>
-      //   <div><button onClick={this.onLike}>Like Me</button></div>
     );
   }
 

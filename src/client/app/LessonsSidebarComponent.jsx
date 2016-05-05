@@ -3,21 +3,48 @@ import LessonPlanSidebarCell from './LessonPlanSidebarCell.jsx';
 
 class LessonsSidebarComponent extends React.Component {
 
-  constructor(props) {
-  	super(props);
+  render() {
+    var planned = [];
+    var completed = [];
+    this.props.plans.map(
+      (function(plan) {
+        if (plan.completed) {
+          completed.push(plan);
+        } else {
+          planned.push(plan);
+        }
+      })
+    );
 
-  	this.state = {
+    if (this.props.plans.length > 0) {
+    	return <div className="sidebarInner">
 
-  	}
-  }
+      <row>
+        <div className="see-more-button"> <span className="glyphicon glyphicon-menu-down"></span> </div>
+        <div className="header-cell"> Planned </div>
+      </row>
+      {planned.map(
+        (function(plan) {
+          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} handleDelete={this.props.handleDelete} className="LessonPlanSidebarCell"/> </row>;
+        }).bind(this)
+      )}
 
-  render () {
+      <row>
+        <div className="see-more-button"> <span className="glyphicon glyphicon-menu-down"></span> </div>
+        <div className="header-cell"> Completed </div>
+      </row>
+      {completed.map(
+        (function(plan) {
+          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} handleDelete={this.props.handleDelete} className="LessonPlanSidebarCell"/> </row>;
+        }).bind(this)
+      )}
 
-    var rows = [];
-    for (var i=0; i < 10; i++) {
-        rows.push(<row> <LessonPlanSidebarCell key={i} id={i} className="LessonPlanSidebarCell"/> </row>);
+
+      </div>;
+    } else {
+      return <row> No lesson plans found! </row>
     }
-  	return <div className="sidebarInner">{rows}</div>;
+
   }
 }
 
