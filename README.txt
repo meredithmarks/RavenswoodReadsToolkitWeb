@@ -20,7 +20,8 @@ or simpler:
     "dev": npm run dev
     "build" : npm run build
 
-
+install local server: npm install -g serve
+run server: serve
 
 
 general react setup, with webpack, babel, etc.
