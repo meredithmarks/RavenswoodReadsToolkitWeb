@@ -52,6 +52,11 @@
 	color: white;
 	text-align: left;
 	vertical-align: middle;
+
+	padding: 0;
+	border: none;
+	box-shadow: none;
+	text-shadow: none;
 }
 
 #login-title {
