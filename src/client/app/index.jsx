@@ -4,6 +4,8 @@ import Firebase from 'firebase';
 import LessonPlanSidebarCell from './LessonPlanSidebarCell.jsx';
 import LessonsSidebarComponent from './LessonsSidebarComponent.jsx';
 import LessonPlanDetail from './LessonPlanDetail.jsx';
+import WizardDetail from './WizardDetail.jsx';
+import WizardQuestion from './WizardQuestion.jsx';
 import ReactFireMixin from 'reactfire';
 
 const App = React.createClass({
@@ -45,6 +47,11 @@ const App = React.createClass({
     this.setState(this.state);
   },
 
+  openNewPlan(event) {
+    var wizard = document.getElementsByClassName("wizard-backdrop")[0];
+    wizard.style.display = "block";
+  },
+
   render() {
   	var renderPlan = function(plan) {
   		if (plan) {
@@ -53,6 +60,22 @@ const App = React.createClass({
   			return "Click to see a lesson plan!";
   		}
   	};
+
+    var renderWizard = function() {
+      return <WizardDetail />;
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      var backdrop = document.getElementsByClassName("wizard-backdrop")[0];
+      var closeButton = document.getElementsByClassName("close")[0];
+      // var button = document.getElementsByClassName();
+      if (event.target == backdrop || event.target == closeButton) {
+          backdrop.style.display = "none";
+      }
+    }
+
+
     var authData = this.firebaseRefs["lessonPlans"].getAuth();
     if (authData) {
       console.log("User " + authData.uid + " is logged in with " + authData.provider);
@@ -63,7 +86,7 @@ const App = React.createClass({
           <tr>
             <td width="300px"> <img id="current-child-picture" src="./public/BabyLucas.jpg" /><span id="current-child-name">Lucas T. <span className="glyphicon glyphicon-menu-down"></span></span><span id="logout-button" onClick={this.handleSignOut}>Logout</span></td>
             <td className="header-title"> Ravenswood Reads Lesson Planner </td>
-            <td width="250px"><div className="create-button pull-right"> + </div></td>
+            <td width="250px"><div id="create-button" className="pull-right" onClick={this.openNewPlan}> + </div></td>
           </tr>
         </tbody>
         </table>
@@ -74,6 +97,11 @@ const App = React.createClass({
         <div id="content">
           {renderPlan(this.state.selectedPlan)}
         </div>
+
+        <div className="wizard-backdrop">
+          {renderWizard()}
+        </div>
+
       </div>
       );
     } else {

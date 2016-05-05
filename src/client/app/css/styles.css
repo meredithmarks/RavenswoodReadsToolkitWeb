@@ -36,7 +36,7 @@ body {
 .wizard {
 	background-color: #94B9D2
 	border-color: #A4A4A3;
-	border-radius: 20px;
+	/*border-radius: 20px;*/
 }
 
 .wizardButton {

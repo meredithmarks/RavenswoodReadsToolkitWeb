@@ -12,7 +12,7 @@
 
 }
 
-.create-button {
+#create-button {
 	/* positioning */
 	float: right;
 	margin: 8px 20px 8px 0px;
