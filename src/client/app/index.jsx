@@ -7,6 +7,7 @@ import LessonPlanDetail from './LessonPlanDetail.jsx';
 import WizardDetail from './WizardDetail.jsx';
 import WizardQuestion from './WizardQuestion.jsx';
 import ReactFireMixin from 'reactfire';
+import {DropdownButton, MenuItem} from 'react-bootstrap';
 
 const App = React.createClass({
 
@@ -14,7 +15,7 @@ const App = React.createClass({
 
   componentWillMount: function() {
     var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
-    this.bindAsArray(ref, "lessonPlans");
+    this.bindAsArray(ref.limitToFirst(100), "lessonPlans");
   },
 
   setSelectedPlan: function(plan) {
@@ -53,6 +54,7 @@ const App = React.createClass({
   },
 
   render() {
+    this.state.lessonPlans.sort(function(a, b) { return  b['.key'] - a['.key']; });
   	var renderPlan = function(plan) {
   		if (plan) {
   			return <LessonPlanDetail plan={plan} />;
@@ -77,6 +79,7 @@ const App = React.createClass({
 
 
     var authData = this.firebaseRefs["lessonPlans"].getAuth();
+    let dropdownTitle = <span>Lucas T. <span className="glyphicon glyphicon-menu-down"></span></span>;
     if (authData) {
       console.log("User " + authData.uid + " is logged in with " + authData.provider);
       return  (
@@ -84,7 +87,11 @@ const App = React.createClass({
         <table className="topbar">
         <tbody>
           <tr>
-            <td width="300px"> <img id="current-child-picture" src="./public/BabyLucas.jpg" /><span id="current-child-name">Lucas T. <span className="glyphicon glyphicon-menu-down"></span></span><span id="logout-button" onClick={this.handleSignOut}>Logout</span></td>
+            <td width="300px"> <img id="current-child-picture" src="public/BabyLucas.JPG" />
+            <DropdownButton title={dropdownTitle} id="name-dropdown" noCaret={true}>
+              <MenuItem eventKey="1" onClick={this.handleSignOut}>Logout</MenuItem>
+            </DropdownButton>
+            </td>
             <td className="header-title"> Ravenswood Reads Lesson Planner </td>
             <td width="250px"><div id="create-button" className="pull-right" onClick={this.openNewPlan}> + </div></td>
           </tr>

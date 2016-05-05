@@ -1,1 +1,3 @@
 .DS_Store
+src/client/public/bundle.js
+src/client/public/bundle.js.map

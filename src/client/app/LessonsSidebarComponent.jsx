@@ -16,11 +16,15 @@ class LessonsSidebarComponent extends React.Component {
       })
     );
 
+    if (false) { // TODO: put this back in if possible
+      var seeMoreButton = <div className="see-more-button"> <span className="glyphicon glyphicon-menu-down"></span> </div>;
+    }
+    
     if (this.props.plans.length > 0) {
     	return <div className="sidebarInner">
 
       <row>
-        <div className="see-more-button"> <span className="glyphicon glyphicon-menu-down"></span> </div>
+        { seeMoreButton }
         <div className="header-cell"> Planned </div>
       </row>
       {planned.map(
@@ -30,12 +34,12 @@ class LessonsSidebarComponent extends React.Component {
       )}
 
       <row>
-        <div className="see-more-button"> <span className="glyphicon glyphicon-menu-down"></span> </div>
+        { seeMoreButton }
         <div className="header-cell"> Completed </div>
       </row>
       {completed.map(
         (function(plan) {
-          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} handleDelete={this.props.handleDelete} className="LessonPlanSidebarCell"/> </row>;
+          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} className="LessonPlanSidebarCell"/> </row>;
         }).bind(this)
       )}
 

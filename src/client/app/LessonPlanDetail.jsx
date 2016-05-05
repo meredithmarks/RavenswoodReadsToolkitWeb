@@ -5,6 +5,7 @@ class LessonPlanDetail extends React.Component {
 
   constructor(props) {
     super(props);
+    this.mailto = this.mailto.bind(this);
   }
 
   _timestampToDate(timestamp) {
@@ -19,9 +20,12 @@ class LessonPlanDetail extends React.Component {
     return day + ', ' + month + ' ' + date + ', ' + year;
   }
 
+  mailto() {
+    window.open('mailto:?subject=Ravenswood Reads Lesson:' + document.getElementById('lesson-plan-date').textContent + '&body=' + encodeURIComponent(document.getElementById('lesson-plan-all').textContent));
+  }
+
   render() {
     var plan = this.props.plan;
-    console.log(plan);
 
     var renderNotes = function(plan) {
       if (plan.completed) {
@@ -65,7 +69,7 @@ class LessonPlanDetail extends React.Component {
         } else {
           return <span>{word}, </span>;
         }
-      })}</span>;
+      })}<br /> &mdash; {activity.notes}</span>;
     };
 
     var renderPhonicsActivity = function(activity) {
@@ -85,23 +89,29 @@ class LessonPlanDetail extends React.Component {
         break;        
       }
 
+      var description;
       if (activity.pattern2 === "") {
         if (activity.game == 2) { // letter tiles
           if (activity.otherDescription === "") { // non-custom
-            return game + activity.pattern1 + ": " + Constants.LetterTilesWordLists[Constants.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
+            description = game + activity.pattern1 + ": " + Constants.LetterTilesWordLists[Constants.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
           } else {
-            return game + activity.otherDescription.replace( /\n/g, ", " );
+            description = game + activity.otherDescription.replace( /\n/g, ", " );
           }
         }
-        return game + activity.pattern1;
+        description = game + activity.pattern1;
       } else {
-        return game + activity.pattern1 + " vs. " + activity.pattern2;
+        description = game + activity.pattern1 + " vs. " + activity.pattern2;
       }
+      return <span>{description} <br /> &mdash; {activity.notes} </span>
     };
-
 
     return (
         <div id="lesson-plan-all">
+          <div id="action-icons">
+            <span className="glyphicon glyphicon-send" onClick={this.mailto}></span>
+            <a href="javascript:window.print()"><span className="glyphicon glyphicon-print"></span></a>
+          </div>
+
           <div id="lesson-plan-date"> {this._timestampToDate(plan.date)} </div>
           <h2 id="lesson-plan-title">Phonics: {plan.title}</h2>
           <div className="section-title">

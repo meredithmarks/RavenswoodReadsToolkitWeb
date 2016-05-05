@@ -1,6 +1,6 @@
 {
   "firebase": "rrtoolkit",
-  "public": "src/client/",
+  "public": "src/client",
   "ignore": [
     "firebase.json",
     "**/.*",
