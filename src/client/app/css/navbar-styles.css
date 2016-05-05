@@ -45,7 +45,8 @@
 	margin: 5px 10px 5px 20px;
 }
 
-#current-child-name {
+#name-dropdown {
+	background: none;
 	font-weight: 300;
 	font-size: 22px;
 	color: white;
