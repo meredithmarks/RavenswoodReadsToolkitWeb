@@ -61,9 +61,9 @@
     }
     #lesson-plan-all {
         position:absolute;
-        left: -250px;
-        top: -350px
-        width: 100%;
+        width: 650px;
         height: 100%;
+        left: -250px;
+        top: -100px;
     }
 }
