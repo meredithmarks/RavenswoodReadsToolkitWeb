@@ -6,6 +6,7 @@ import LessonsSidebarComponent from './LessonsSidebarComponent.jsx';
 import LessonPlanDetail from './LessonPlanDetail.jsx';
 import WizardDetail from './WizardDetail.jsx';
 import WizardQuestion from './WizardQuestion.jsx';
+import AddStudentForm from './AddStudentForm.jsx';
 import ReactFireMixin from 'reactfire';
 import {DropdownButton, MenuItem} from 'react-bootstrap';
 
@@ -13,9 +14,30 @@ const App = React.createClass({
 
   mixins: [ReactFireMixin],
 
+  baseRef: new Firebase("https://rrtoolkit.firebaseio.com"),
+
+  _checkIfUserExists: function(authData, self) {
+    var usersRef = this.baseRef.child("users");
+    usersRef.once("value", function(snapshot) {
+      var userExists = snapshot.child(authData.uid).exists();
+      if (userExists) {
+        if (self.firebaseRefs["lessonPlans"]) { self.unbind("lessonPlans"); }
+        if (self.firebaseRefs["student"]) { self.unbind("student"); }
+        var student = snapshot.child(authData.uid).val();
+        var studentRef = new Firebase("https://rrtoolkit.firebaseio.com/students/" + student + "/");
+        self.bindAsObject(studentRef, "student");
+        var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/" + student + "/lessonPlans/");
+        self.bindAsArray(ref, "lessonPlans");
+      } else {
+        self.setState({ addingStudent: true })
+      }
+    });
+  },
+
   componentWillMount: function() {
-    var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/Lucas/lessonPlans/");
-    this.bindAsArray(ref.limitToFirst(100), "lessonPlans");
+    var authData = this.baseRef.getAuth();
+    if (!authData) { return; }
+    this._checkIfUserExists(authData, this);
   },
 
   setSelectedPlan: function(plan) {
@@ -31,11 +53,11 @@ const App = React.createClass({
 
   handleSignIn(event) {
     var self = this;
-    this.firebaseRefs["lessonPlans"].authWithOAuthPopup("google", function(error, authData) {
+    this.baseRef.authWithOAuthPopup("google", function(error, authData) {
       if (error) {
         console.log("Login Failed!", error);
       } else {
-        self.setState(self.state);
+        self._checkIfUserExists(authData, self);
         console.log("Authenticated successfully with payload:", authData);
       }
     }, {
@@ -44,16 +66,103 @@ const App = React.createClass({
   },
 
   handleSignOut(event) {
-    this.firebaseRefs["lessonPlans"].unauth();
+    this.baseRef.unauth();
+    this.unbind("lessonPlans");
+    this.unbind("student");
     this.setState(this.state);
+  },
+
+  addStudent(newStudent) {
+    var authData = this.baseRef.getAuth();
+    var usersRef = this.baseRef.child("users");
+    var studentsRef = this.baseRef.child("students");
+    var newStudentRef = studentsRef.push(newStudent);
+
+    if (this.firebaseRefs["lessonPlans"]) { this.unbind("lessonPlans"); }
+    if (this.firebaseRefs["student"]) { this.unbind("student"); }
+
+    usersRef.child(authData.uid).set(newStudentRef.key());
+    var studentRef = new Firebase("https://rrtoolkit.firebaseio.com/students/" + newStudentRef.key() + "/");
+    this.bindAsObject(studentRef, "student");
+
+    var ref = newStudentRef.child("lessonPlans");
+    this.bindAsArray(ref, "lessonPlans");
+    this.setState({addingStudent: false});
   },
 
   openNewPlan(event) {
     var wizard = document.getElementsByClassName("wizard-backdrop")[0];
     wizard.style.display = "block";
+
+    this.firebaseRefs["lessonPlans"].push({
+      "brandNewReadingBook" : "Story Time",
+      "communicationActivity" : {
+        "notes" : "Talk through the story again to ensure comprehension. Have Lucas write an alternate ending to the story!",
+        "writingSample" : ""
+      },
+      "completed" : 1,
+      "date" : 1.461735987216195E9,
+      "notes" : "This was great, Lucas is great, everything is great!",
+      "phonicsActivity" : {
+        "game" : 4,
+        "notes" : "I think Lucas will have a bit of trouble with this concept, so make sure to be clear and repeat yourself!",
+        "otherDescription" : "",
+        "pattern1" : "Dd /d/",
+        "pattern2" : ""
+      },
+      "rereadingBooks" : [ "I Like to Count", "The Cat Came Back" ],
+      "title" : "Dd /d/",
+      "wordBankActivity" : {
+        "game" : 1,
+        "notes" : "I really want to make sure that Lucas gets all of these words today!",
+        "numNewWords" : 2,
+        "otherDescription" : "",
+        "wordList" : [ "was", "you", "all", "one", "the" ]
+      }
+    });
   },
 
   render() {
+    if (!this.baseRef.getAuth()) {
+      console.log("User is logged out");
+      return (
+        <div>
+          <div id="login-title"> Ravenswood Reads Toolkit </div>
+          <div type="button" id="login-button" className="btn btn-primary btn-lg" onClick={this.handleSignIn}>Sign In with Google</div>
+        </div>
+      );
+    }
+    if (!this.state) { // Render gets called before callback in componentWillMount returns
+      return <div></div>
+    }
+
+    if (this.state.addingStudent) {
+      return (
+        <div>
+          <table className="topbar">
+            <tbody>
+            <tr>
+              <td width="100px">
+                <DropdownButton title="Options" id="options-dropdown" noCaret={true}>
+                  <MenuItem eventKey="1" onClick={this.handleSignOut}>Logout</MenuItem>
+                </DropdownButton>
+              </td>
+            <td className="header-title"> Ravenswood Reads Lesson Planner </td>
+            <td width="100px"></td>
+            </tr>
+            </tbody>
+          </table>
+
+          <AddStudentForm addStudent={this.addStudent} />
+        </div>
+      );
+    }
+
+    if (!this.state.student) { // Mother of god
+      return <div></div>;
+    }
+
+    // logged in, has child
     this.state.lessonPlans.sort(function(a, b) { return  b['.key'] - a['.key']; });
   	var renderPlan = function(plan) {
   		if (plan) {
@@ -77,17 +186,13 @@ const App = React.createClass({
       }
     }
 
-
-    var authData = this.firebaseRefs["lessonPlans"].getAuth();
-    let dropdownTitle = <span>Lucas T. <span className="glyphicon glyphicon-menu-down"></span></span>;
-    if (authData) {
-      console.log("User " + authData.uid + " is logged in with " + authData.provider);
-      return  (
+    let dropdownTitle = <span>{this.state.student.name} <span className="glyphicon glyphicon-menu-down"></span></span>;
+    return (
       <div>
         <table className="topbar">
         <tbody>
           <tr>
-            <td width="300px"> <img id="current-child-picture" src="public/BabyLucas.JPG" />
+            <td width="300px"> <img id="current-child-picture" src="public/DefaultPicture.png" />
             <DropdownButton title={dropdownTitle} id="name-dropdown" noCaret={true}>
               <MenuItem eventKey="1" onClick={this.handleSignOut}>Logout</MenuItem>
             </DropdownButton>
@@ -110,16 +215,7 @@ const App = React.createClass({
         </div>
 
       </div>
-      );
-    } else {
-      console.log("User is logged out");
-      return (
-        <div>
-          <div id="login-title"> Ravenswood Reads Toolkit </div>
-          <div type="button" id="login-button" className="btn btn-primary btn-lg" onClick={this.handleSignIn}>Sign In with Google</div>
-        </div>
-      );
-    }
+    );
   }
 });
 
