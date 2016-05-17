@@ -65,3 +65,12 @@
 .wizard .question button {
     padding-top: 16px;
 }
+
+.wizard .other-text {
+    padding-top: 10px;
+    /*padding-left: 150px;*/
+    /*padding-right: 150px;*/
+    width: 75%;
+    margin: auto;
+    font-size: 14pt;
+}
