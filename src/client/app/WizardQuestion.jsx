@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Constants from './constants';
+import Select from 'react-select';
 import { Button, ButtonGroup } from 'react-bootstrap';
 
 class WizardQuestion extends React.Component {
@@ -19,10 +20,11 @@ class WizardQuestion extends React.Component {
     this.chooseOneCustomHandleNext = this.chooseOneCustomHandleNext.bind(this);
     this.chooseOneCustomHandleKeyboard = this.chooseOneCustomHandleKeyboard.bind(this);
     this.chooseOneCustomHandleChange = this.chooseOneCustomHandleChange.bind(this);
+    this.chooseMultipleHandleNext = this.chooseMultipleHandleNext.bind(this);
   }
 
   handleNext(event) {
-    this.props.handleNext(event, this.state.id);
+    this.props.question.handleSubmit(event, this.state.id);
   }
 
   chooseOneCustomHandleChange(event) {
@@ -49,9 +51,15 @@ class WizardQuestion extends React.Component {
     var optionalChoice = this.state.question.choices[(this.state.question.choices.length - 1)];
     
     this.setState({ selectedChoice: chosen});
-    if (chosen != optionalChoice) {
+    if (!this.state.question.hasOptionalText || chosen != optionalChoice) {
       this.handleNext(event);
     }
+  }
+
+  chooseMultipleHandleNext(value) {
+    this.setState({ values: value });
+
+    this.handleNext(value);
   }
 
   render() {
@@ -67,7 +75,7 @@ class WizardQuestion extends React.Component {
             <ButtonGroup>
               {this.state.question.choices.map(
                 (function(choice) {
-                  return <Button target={choice} onClick={this.chooseOneHandleNext} active={this.state.selectedChoice === choice}>{choice}</Button>;
+                  return <Button key={choice} target={choice} onClick={this.chooseOneHandleNext} active={this.state.selectedChoice === choice}>{choice}</Button>;
                 }).bind(this)
               )}
             </ButtonGroup>
@@ -76,16 +84,49 @@ class WizardQuestion extends React.Component {
 
           { this.state.question.hasOptionalText && this.state.selectedChoice === this.state.question.choices[this.state.question.choices.length-1] && // or ? ______ : }
             <div className="form-group  other-text">
-                <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Type in your custom content here" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
+                <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Describe your activity here!" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
             </div>
           }
 
         </div>
       );
+    } else if (this.state.question.type == 'ChooseMultiple') {
+      return ( 
+        <div className="question" id={"question" + this.state.id}>
+          { this.state.question.text }
+          <br></br>
+
+          <div className="form-group">
+            <div>
+              <Select
+                name="books"
+                value={this.state.values}
+                multi={true}
+                options={this.props.question.choices}
+                simpleValue={true}
+                delimiter=";"
+                onChange={this.chooseMultipleHandleNext}
+              />
+            </div>
+          </div>
+
+        </div>
+      );
+    } else if (this.state.question.type == 'Text') {
+      return (
+        <div className="question" id={"question" + this.state.id}>
+          { this.state.question.text }
+          <br></br>
+
+          <div className="form-group  other-text">
+              <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Describe your activity here!" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
+          </div>
+        </div>
+      );
     } else if (this.state.question.type == 'OtherType') {
       // ...
     } else {
-      // ... 
+      // ...
     }
 
     // Default filler button

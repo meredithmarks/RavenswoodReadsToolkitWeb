@@ -93,6 +93,11 @@ const App = React.createClass({
   openNewPlan(event) {
     var wizard = document.getElementsByClassName("wizard-backdrop")[0];
     wizard.style.display = "block";
+  },
+
+  handleNewLessonPlan(newLessonPlan) {
+    console.log(newLessonPlan);
+    // this.firebaseRefs["lessonPlans"].push(newLessonPlan);
 
     this.firebaseRefs["lessonPlans"].push({
       "brandNewReadingBook" : "Story Time",
@@ -120,6 +125,9 @@ const App = React.createClass({
         "wordList" : [ "was", "you", "all", "one", "the" ]
       }
     });
+
+    var backdrop = document.getElementsByClassName("wizard-backdrop")[0];
+    backdrop.style.display = "none";
   },
 
   render() {
@@ -171,9 +179,9 @@ const App = React.createClass({
   			return "Click to see a lesson plan!";
   		}
   	};
-
+    var self = this;
     var renderWizard = function() {
-      return <WizardDetail />;
+      return <WizardDetail student={self.state.student} handleNewLessonPlan={self.handleNewLessonPlan}/>;
     }
 
     // When the user clicks anywhere outside of the modal, close it
