@@ -6,7 +6,7 @@ class WizardDetail extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {currentQuestion: 0};
+    this.state = { currentQuestion: 0 };
   }
 
   hideWizard(event) {
@@ -47,8 +47,18 @@ class WizardDetail extends React.Component {
 
   render() {
 
-    var question0 = {index : 0};
-    var question1 = {index : 1};
+    var question0 = { index : 0, 
+                      type : 'ChooseOne',
+                      hasOptionalText : true,
+                      text : 'What new book do you want to read?',
+                      choices : ['See Spot Run', 'Dogs and Cats', 'Other']
+                    };
+    var question1 = { index : 1, 
+                      type : 'ChooseOne',
+                      hasOptionalText : true,
+                      text : 'What new book do you want to read?',
+                      choices : ['See Spot Run', 'Dogs and Cats', 'Other']
+                    };
     var question2 = {index : 2};
     var question3 = {index : 3};
     var question4 = {index : 4};
@@ -59,11 +69,14 @@ class WizardDetail extends React.Component {
       <div className="wizard">
         <span className="close pull-right">×</span>
         <div className="questions">
-          {questions.map(
-            (function(question) {
-              return <WizardQuestion key={question.index} question={question} handleNext={this.handleNext} />;
-            }).bind(this)
-          )}
+          <form className="form-horizontal" onSubmit={this.handleSubmit}>
+
+            {questions.map(
+              (function(question) {
+                return <WizardQuestion key={question.index} question={question} handleNext={this.handleNext} />;
+              }).bind(this)
+            )}
+          </form>
         </div>
       </div>
     );
