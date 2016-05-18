@@ -74,3 +74,12 @@
     margin: auto;
     font-size: 14pt;
 }
+
+.wizard .list {
+    width: 80%;
+    margin: auto;
+}
+
+.wizard input {
+    width: 100px;
+}

@@ -59,7 +59,10 @@ class WizardDetail extends React.Component {
                       text : 'What new book do you want to read?',
                       choices : ['See Spot Run', 'Dogs and Cats', 'Other']
                     };
-    var question2 = {index : 2};
+    var question2 = { index : 2,
+                      text : 'What new words would you like to use this week?',
+                      type : 'List' 
+                    };
     var question3 = {index : 3};
     var question4 = {index : 4};
     var questions = [question0, question1, question2, question3, question4];
