@@ -17,6 +17,7 @@ class WizardQuestion extends React.Component {
     this.handleNext = this.handleNext.bind(this);
 
     this.chooseMultipleHandleNext = this.chooseMultipleHandleNext.bind(this);
+    this.selectHandleNext = this.selectHandleNext.bind(this);
 
     /* Choose one Multiple Choice Handlers */
     this.chooseOneHandleNext = this.chooseOneHandleNext.bind(this);
@@ -104,6 +105,15 @@ class WizardQuestion extends React.Component {
     this.handleNext(value);
   }
 
+  /*
+   * Select Handler
+   */
+  selectHandleNext(value) {
+    this.setState({ value: value });
+
+    this.handleNext(value);
+  }
+
   render() {
     // Choose one multiple choice
     if (this.state.question.type == 'ChooseOne') {
@@ -146,7 +156,7 @@ class WizardQuestion extends React.Component {
                   handleDelete={this.handleDelete}
                   handleAddition={this.handleAddition}
                   handleDrag={this.handleDrag}
-                  placeholder="..."
+                  placeholder="new word"
                   minQueryLength={2}>
               </ReactTags>
             </div>
@@ -158,7 +168,7 @@ class WizardQuestion extends React.Component {
           { this.state.question.text }
           <br></br>
 
-          <div className="form-group">
+          <div className="form-group select">
             <div>
               <Select
                 name="books"
@@ -174,13 +184,33 @@ class WizardQuestion extends React.Component {
 
         </div>
       );
+    } else if (this.state.question.type == 'Select') {
+      return ( 
+        <div className="question" id={"question" + this.state.id}>
+          { this.state.question.text }
+          <br></br>
+
+          <div className="form-group select">
+            <div>
+              <Select
+                name="new-books"
+                value={this.state.value}
+                options={this.props.question.choices}
+                simpleValue={true}
+                onChange={this.selectHandleNext}
+              />
+            </div>
+          </div>
+
+        </div>
+      );
     } else if (this.state.question.type == 'Text') {
       return (
         <div className="question" id={"question" + this.state.id}>
           { this.state.question.text }
           <br></br>
 
-          <div className="form-group  other-text">
+          <div className="form-group other-text">
               <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Describe your activity here!" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
           </div>
         </div>

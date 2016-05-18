@@ -13,9 +13,12 @@ class WizardDetail extends React.Component {
     this.handleWordBankSubmit = this.handleWordBankSubmit.bind(this);
     this.handlePhonicsSubmit = this.handlePhonicsSubmit.bind(this);
     this.handleRereadingSubmit = this.handleRereadingSubmit.bind(this);
+    this.handleNewReadingSubmit = this.handleNewReadingSubmit.bind(this);
     this.handleCommunicationSubmit = this.handleCommunicationSubmit.bind(this);
 
     this.handleLessonPlanDone = this.handleLessonPlanDone.bind(this);
+
+    this.booksRef = new Firebase("https://rrtoolkit.firebaseio.com/books");
   }
 
   hideWizard(event) {
@@ -73,6 +76,11 @@ class WizardDetail extends React.Component {
     this.handleNext(event, id);
   }
 
+  handleNewReadingSubmit(event, id) {
+    this.setState({ brandNewReadingBook : event });
+    this.handleNext(event, id);
+  }
+
   handleCommunicationSubmit(event, id) {
     this.setState({ communicationActivity : event.target.value });
     this.handleNext(event, id);
@@ -96,6 +104,19 @@ class WizardDetail extends React.Component {
         bookOptions.push({ value: name, label: name });
       });
     }
+
+    var newBookOptions = [];
+    this.booksRef.once("value", function(data) {
+      data.forEach(function(bookSnapshot) {
+        var name = bookSnapshot.key();
+        // bookSnapshot.orderByChild("patterns/").once("value", function(snapshot) {
+        //   snapshot.forEach(function(pattern) {
+        //     console.log(pattern.val());
+        //   });
+        // });
+        newBookOptions.push({ value: name, label: name});
+      });
+    });
 
     var question0 = { index : 0, 
                       type : 'ChooseOne',
@@ -127,22 +148,29 @@ class WizardDetail extends React.Component {
                       handleSubmit : this.handlePhonicsSubmit
                     };
     // TODO new reading here
-    var question4 = { index : 4,
+    var question4 = { index : 4, 
+                      type : 'Select',
+                      hasOptionalText : false,
+                      text : "What new book would you like to read today?",
+                      choices : newBookOptions,
+                      handleSubmit : this.handleNewReadingSubmit
+                    };
+    var question5 = { index : 5,
                       type : 'List',
                       text : 'What new words would you like to use this week?',
                       handleSubmit : this.handleNext 
                     };
-    var question5 = { index : 5,
+    var question6 = { index : 6,
                       type : 'Text',
                       hasOptionalText : false,
                       text : 'What would you like to write about today?',
                       handleSubmit : this.handleCommunicationSubmit
                     };
     // TODO date picker here
-    var question6 = { index : 6,
+    var question7 = { index : 7,
                       handleSubmit : this.handleNext
                     };
-    var questions = [question0, question1, question2, question3, question4, question5, question6];
+    var questions = [question0, question1, question2, question3, question4, question5, question6, question7];
 
     // The Modal
     return(

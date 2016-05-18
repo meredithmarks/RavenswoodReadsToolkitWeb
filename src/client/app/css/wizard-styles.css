@@ -79,6 +79,12 @@
     margin: auto;
 }
 
+.wizard .select {
+    padding-top: 10px;
+    width: 75%;
+    margin: auto;
+}
+
 .wizard input {
     width: 100px;
 }
