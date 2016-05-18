@@ -1,19 +1,16 @@
 #sidebar {
 	/* positioning */
 	position: absolute;
-	top: 60px;
+	top: 70px;
 	left: 0px;
-	height: 100%;
+	bottom: 0;
+	overflow-y: scroll;
 	width: 250px;
-	padding: 5px 0 5px 8px;
+	padding: 0 0 5px 8px;
 }
 
 .sidebarInner {
-	/*width: 250px;*/
-	height: 100%;
 	min-width: 150px;
-	/*max-width: 200px;*/
-
 	padding: 0;
 }
 

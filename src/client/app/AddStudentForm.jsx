@@ -8,7 +8,7 @@ class AddStudentForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {currentPhonicsPattern: 0, readBooks: [] };
+    this.state = {currentPhonicsPattern: NaN, readBooks: "", name: "", grade: "" };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.nameChange = this.nameChange.bind(this);
     this.gradeChange = this.gradeChange.bind(this);
@@ -35,6 +35,10 @@ class AddStudentForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     var student = this.state;
+    if (student.name == "" || student.grade == "" || isNaN(student.currentPhonicsPattern)) {
+      alert("Name, grade, and current phonics pattern are required!");
+      return false;
+    }
     student.readBooks = student.readBooks.split(';');
     this.props.addStudent(student);
     return false;
@@ -87,7 +91,7 @@ class AddStudentForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <label className="control-label col-sm-4" htmlFor="phonics-pattern">Phonics Pattern:</label>
+          <label className="control-label col-sm-4" htmlFor="phonics-pattern">Current phonics pattern:</label>
           <div className="col-sm-8">
             <Select
                 name="phonics-pattern"
@@ -102,7 +106,7 @@ class AddStudentForm extends React.Component {
         <div className="form-group">
           <label className="control-label col-sm-4" htmlFor="name">Enter any high-frequency words (comma-separated):</label>
           <div className="col-sm-8">
-            <input type="text" className="form-control" id="name" onChange={this.hfwChange} />
+            <input type="text" className="form-control" id="name" onChange={this.hfwChange} placeholder="ex. this, that"/>
           </div>
         </div>
 
