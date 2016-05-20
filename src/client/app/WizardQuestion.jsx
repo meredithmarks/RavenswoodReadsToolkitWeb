@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Constants from './constants';
 import Select from 'react-select';
 import { Button, ButtonGroup } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import Moment from 'moment';
 
 class WizardQuestion extends React.Component { 
 
@@ -10,7 +12,6 @@ class WizardQuestion extends React.Component {
     super(props);
     this.state = {  id : props.question.index, 
                     question : props.question,
-                    listEntries: [],
                     tags: []
                   };
 
@@ -23,23 +24,19 @@ class WizardQuestion extends React.Component {
     this.chooseOneHandleNext = this.chooseOneHandleNext.bind(this);
     this.chooseOneCustomHandleNext = this.chooseOneCustomHandleNext.bind(this);
     this.chooseOneCustomHandleKeyboard = this.chooseOneCustomHandleKeyboard.bind(this);
-    this.chooseOneCustomHandleChange = this.chooseOneCustomHandleChange.bind(this);
 
-    /* Tag input handlers*/
+    /* Tag input handlers */
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
     this.handleDrag = this.handleDrag.bind(this);
+
+    this.handleTextAreaLoseFocus = this.handleTextAreaLoseFocus.bind(this);
+
+    this.handleDatePickerChange = this.handleDatePickerChange.bind(this);
   }
 
   handleNext(event) {
     this.props.question.handleSubmit(event, this.state.id);
-  }
-
-  /*
-   * Choose one handlers
-   */
-  chooseOneCustomHandleChange(event) {
-    this.setState({ customText: event.target.value});
   }
 
   // If someone types enter in a custom text box, go to the next question
@@ -83,6 +80,8 @@ class WizardQuestion extends React.Component {
         text: tag
     });
     this.setState({tags: tags});
+
+    this.handleNext(tags);
   }
 
   handleDrag(tag, currPos, newPos) {
@@ -101,7 +100,6 @@ class WizardQuestion extends React.Component {
    */
   chooseMultipleHandleNext(value) {
     this.setState({ values: value });
-
     this.handleNext(value);
   }
 
@@ -110,15 +108,23 @@ class WizardQuestion extends React.Component {
    */
   selectHandleNext(value) {
     this.setState({ value: value });
-
     this.handleNext(value);
+  }
+
+  handleDatePickerChange(date) {
+    this.setState({ date: date});
+    this.handleNext(date);
+  }
+
+  handleTextAreaLoseFocus(event) {
+    this.handleNext(event);
   }
 
   render() {
     // Choose one multiple choice
     if (this.state.question.type == 'ChooseOne') {
       return ( 
-        <div className="question" id={"question" + this.state.id}>
+        <div className="question well" id={"question" + this.state.id}>
           { this.state.question.text }
           <br></br>
 
@@ -136,7 +142,7 @@ class WizardQuestion extends React.Component {
 
           { this.state.question.hasOptionalText && this.state.selectedChoice === this.state.question.choices[this.state.question.choices.length-1] && // or ? ______ : }
             <div className="form-group  other-text">
-                <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Describe your activity here!" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
+                <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder={this.props.question.placeholder} onBlur={this.handleTextAreaLoseFocus} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
             </div>
           }
 
@@ -145,26 +151,23 @@ class WizardQuestion extends React.Component {
     } else if (this.state.question.type == 'List') {
         var ReactTags = require('react-tag-input').WithContext;
         var tags = this.state.tags;
-        var suggestions = this.state.suggestions;
         return (
-          <div className="question" id={"question" + this.state.id}>
+          <div className="question well" id={"question" + this.state.id}>
             { this.state.question.text }
             <br></br>
             <div className = "list">
               <ReactTags tags={tags}
-                  suggestions={[]}
                   handleDelete={this.handleDelete}
                   handleAddition={this.handleAddition}
                   handleDrag={this.handleDrag}
-                  placeholder="new word"
-                  minQueryLength={2}>
+                  placeholder="new word">
               </ReactTags>
             </div>
           </div>
         )
     } else if (this.state.question.type == 'ChooseMultiple') {
       return ( 
-        <div className="question" id={"question" + this.state.id}>
+        <div className="question well" id={"question" + this.state.id}>
           { this.state.question.text }
           <br></br>
 
@@ -186,7 +189,7 @@ class WizardQuestion extends React.Component {
       );
     } else if (this.state.question.type == 'Select') {
       return ( 
-        <div className="question" id={"question" + this.state.id}>
+        <div className="question well" id={"question" + this.state.id}>
           { this.state.question.text }
           <br></br>
 
@@ -206,24 +209,33 @@ class WizardQuestion extends React.Component {
       );
     } else if (this.state.question.type == 'Text') {
       return (
-        <div className="question" id={"question" + this.state.id}>
+        <div className="question well" id={"question" + this.state.id}>
           { this.state.question.text }
           <br></br>
 
           <div className="form-group other-text">
-              <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder="Describe your activity here!" onChange={this.chooseOneCustomHandleChange} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
+              <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder={this.props.question.placeholder} onBlur={this.handleTextAreaLoseFocus} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
           </div>
         </div>
       );
-    } else if (this.state.question.type == 'OtherType') {
-      // ...
+    } else if (this.state.question.type == 'Date') {
+      return (
+        <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.text }
+          <br></br>
+
+          <div className="form-group other-text">
+            <DatePicker placeholder="Click to select a date" selected={this.state.date} onChange={this.handleDatePickerChange} />
+          </div>
+        </div>
+      );
     } else {
-      // ...
+      // We don't have any more types!
     }
 
     // Default filler button
     return (
-    <div className="question" id={"question" + this.state.id}>
+    <div className="question well" id={"question" + this.state.id}>
       Hi!!!
       <br></br>
       <button type="button" onClick={this.handleNext}> theButton </button>

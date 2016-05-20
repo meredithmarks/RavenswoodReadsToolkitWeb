@@ -29,7 +29,7 @@ class LessonsSidebarComponent extends React.Component {
       </row>
       {planned.map(
         (function(plan) {
-          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} handleDelete={this.props.handleDelete} className="LessonPlanSidebarCell"/> </row>;
+          return <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} handleDelete={this.props.handleDelete} className="LessonPlanSidebarCell"/>;
         }).bind(this)
       )}
 
@@ -39,7 +39,7 @@ class LessonsSidebarComponent extends React.Component {
       </row>
       {completed.map(
         (function(plan) {
-          return <row> <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} className="LessonPlanSidebarCell"/> </row>;
+          return <LessonPlanSidebarCell key={plan['.key']} selected={this.props.selectedPlan===plan} lessonPlan={plan} handleClick={this.props.handleClick} className="LessonPlanSidebarCell"/>;
         }).bind(this)
       )}
 

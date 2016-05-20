@@ -57,12 +57,14 @@
 
 .wizard .question {
     font-size: 20pt;
-    padding-top: 110px;
-    padding-bottom: 110px;
+    /*padding-top: 110px;*/
+    /*padding-bottom: 110px;*/
+    margin: 110px;
     text-align: center;
 }
 
-.wizard .question button {
+.wizard .question .select {
+    font-size: 14pt;
 }
 
 .wizard .other-text {
@@ -72,6 +74,10 @@
     width: 75%;
     margin: auto;
     font-size: 14pt;
+}
+
+.wizard textarea {
+    text-align: center;
 }
 
 .wizard .list {
@@ -86,5 +92,5 @@
 }
 
 .wizard input {
-    width: 100px;
+    width: 150px;
 }

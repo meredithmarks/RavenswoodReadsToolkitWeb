@@ -31,12 +31,12 @@ class LessonPlanDetail extends React.Component {
       if (plan.completed) {
         return (
           <div>
-          <div className="section-title">
-            Lesson Notes:
-          </div>
-          <ul className="section-details">
-            <li>{plan.notes}</li>
-          </ul>
+            <div className="section-title">
+              Lesson Notes:
+            </div>
+            <ul className="section-details">
+              <li>{plan.notes}</li>
+            </ul>
           </div>
         );
       } else {
@@ -47,27 +47,27 @@ class LessonPlanDetail extends React.Component {
     var renderWordBankActivity = function(activity) {
       var game = "";
       switch (activity.game) {
-        case 0:
+        case Constants.BingoNum:
         game = "Bingo - "
         break;
-        case 1:
+        case Constants.MemoryNum:
         game = "Memory - "
         break;
-        case 7:
+        case Constants.LetterTilesWordBankNum:
         game = "Letter Tiles - "
         break;
-        case 5:
+        case Constants.OtherWordBankNum:
         game = activity.otherDescription + " - "
         break;        
       }
 
       return <span>{game} {activity.wordList.map(function(word, index) {
         if (index < activity.numNewWords) {
-          return <span className="regular">{word}, </span>;
+          return <span key={word} className="regular">{word}, </span>;
         } else if (index === activity.wordList.length - 1) {
-          return <span>{word}</span>;
+          return <span key={word}>{word}</span>;
         } else {
-          return <span>{word}, </span>;
+          return <span key={word}>{word}, </span>;
         }
       })}<br /> &mdash; {activity.notes}</span>;
     };
@@ -75,30 +75,31 @@ class LessonPlanDetail extends React.Component {
     var renderPhonicsActivity = function(activity) {
       var game = "";
       switch (activity.game) {
-        case 2:
+        case Constants.LetterTilesPhonicsNum:
         game = "Letter Tiles - "
         break;
-        case 3:
-        game = "Picture Sorts - "
+        case Constants.PictureSortNum:
+        game = "Picture Sort - "
         break;
-        case 4:
+        case Constants.RainbowWritingNum:
         game = "Rainbow Writing - "
         break;
-        case 6: 
+        case Constants.OtherPhonicsNum: 
         game = activity.otherDescription
         break;        
       }
 
       var description;
       if (activity.pattern2 === "") {
-        if (activity.game == 2) { // letter tiles
+        if (activity.game == Constants.LetterTilesPhonicsNum) { // letter tiles
           if (activity.otherDescription === "") { // non-custom
             description = game + activity.pattern1 + ": " + Constants.LetterTilesWordLists[Constants.PhonicsPatterns.indexOf(activity.pattern1)].join(", ");
           } else {
             description = game + activity.otherDescription.replace( /\n/g, ", " );
           }
+        } else {
+          description = game + ": " + activity.pattern1;
         }
-        description = game + activity.pattern1;
       } else {
         description = game + activity.pattern1 + " vs. " + activity.pattern2;
       }
@@ -106,48 +107,48 @@ class LessonPlanDetail extends React.Component {
     };
 
     return (
-        <div id="lesson-plan-all">
-          <div id="action-icons">
-            <span className="glyphicon glyphicon-send" onClick={this.mailto}></span>
-            <a href="javascript:window.print()"><span className="glyphicon glyphicon-print"></span></a>
-          </div>
-
-          <div id="lesson-plan-date"> {this._timestampToDate(plan.date)} </div>
-          <h2 id="lesson-plan-title">Phonics: {plan.title}</h2>
-          <div className="section-title">
-            Revisiting Familiar Texts:
-          </div>
-          <ul className="section-details">
-            <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks.join(", ")}</i></li>
-          </ul>
-
-          <div className="section-title">
-            Word Study:
-          </div>
-          <ul className="section-details">
-            <li><span className="sub-section-header">Word bank activity:</span> {renderWordBankActivity(plan.wordBankActivity)}</li>
-            <li><span className="sub-section-header">Phonics activity:</span> {renderPhonicsActivity(plan.phonicsActivity)}</li>
-          </ul>
-
-          <div className="section-title">
-            New Reading / Sharing a Book:
-          </div>
-          <ul className="section-details">
-            <li><span className="sub-section-header">Book Title:</span> <i>{plan.brandNewReadingBook}</i></li>
-            <li><span className="sub-section-header">Introduction:</span> Picture walk through the book, asking questions about what might happen.</li>
-            <li><span className="sub-section-header">During reading:</span> Make sure your student is pointing to the words as they read! Ask comprehension questions as you go along together.</li>
-            <li><span className="sub-section-header">After reading:</span> Ask for a summary of what happened in the book. Have them point out their favorite page!</li>
-          </ul>
-
-          <div className="section-title">
-            Communication:
-          </div>
-          <ul className="section-details">
-            <li><span className="sub-section-header">Notes:</span> {plan.communicationActivity.notes}</li>
-          </ul>
-
-          {renderNotes(plan)}
+      <div id="lesson-plan-all">
+        <div id="action-icons">
+          <span className="glyphicon glyphicon-send" onClick={this.mailto}></span>
+          <a href="javascript:window.print()"><span className="glyphicon glyphicon-print"></span></a>
         </div>
+
+        <div id="lesson-plan-date"> {this._timestampToDate(plan.date)} </div>
+        <h2 id="lesson-plan-title">Phonics: {plan.title}</h2>
+        <div className="section-title">
+          Revisiting Familiar Texts:
+        </div>
+        <ul className="section-details">
+          <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks.join(", ")}</i></li>
+        </ul>
+
+        <div className="section-title">
+          Word Study:
+        </div>
+        <ul className="section-details">
+          <li><span className="sub-section-header">Word bank activity:</span> {renderWordBankActivity(plan.wordBankActivity)}</li>
+          <li><span className="sub-section-header">Phonics activity:</span> {renderPhonicsActivity(plan.phonicsActivity)}</li>
+        </ul>
+
+        <div className="section-title">
+          New Reading / Sharing a Book:
+        </div>
+        <ul className="section-details">
+          <li><span className="sub-section-header">Book Title:</span> <i>{plan.brandNewReadingBook}</i></li>
+          <li><span className="sub-section-header">Introduction:</span> Picture walk through the book, asking questions about what might happen.</li>
+          <li><span className="sub-section-header">During reading:</span> Make sure your student is pointing to the words as they read! Ask comprehension questions as you go along together.</li>
+          <li><span className="sub-section-header">After reading:</span> Ask for a summary of what happened in the book. Have them point out their favorite page!</li>
+        </ul>
+
+        <div className="section-title">
+          Communication:
+        </div>
+        <ul className="section-details">
+          <li><span className="sub-section-header">Notes:</span> {plan.communicationActivity.notes}</li>
+        </ul>
+
+        {renderNotes(plan)}
+      </div>
     );
   }
 

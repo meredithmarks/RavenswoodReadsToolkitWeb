@@ -8,13 +8,18 @@ class AddStudentForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {currentPhonicsPattern: NaN, readBooks: "", name: "", grade: "" };
+    this.state = { currentPhonicsPattern: NaN, readBooks: "", name: "", grade: "", tags: [] };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.nameChange = this.nameChange.bind(this);
     this.gradeChange = this.gradeChange.bind(this);
     this.phonicsPatternChange = this.phonicsPatternChange.bind(this);
     this.hfwChange = this.hfwChange.bind(this);
     this.readBooksChange = this.readBooksChange.bind(this);
+
+    /* Tag input handlers */
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleAddition = this.handleAddition.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
 
     var self = this;
     this.phonicsOptions = [];
@@ -40,7 +45,12 @@ class AddStudentForm extends React.Component {
       return false;
     }
     student.readBooks = student.readBooks.split(';');
+    student.highFrequencyWords = [];
+    this.state.tags.map(function(word) {
+      student.highFrequencyWords.push(word.text);
+    });
     this.props.addStudent(student);
+    console.log(student);
     return false;
   }
 
@@ -65,7 +75,38 @@ class AddStudentForm extends React.Component {
     this.setState({ readBooks: value });
   }
 
+  /* 
+   * List handlers
+   */
+  handleDelete(i) {
+    var tags = this.state.tags;
+    tags.splice(i, 1);
+    this.setState({tags: tags});
+  }
+
+  handleAddition(tag) {
+    var tags = this.state.tags;
+    tags.push({
+        id: tags.length + 1,
+        text: tag
+    });
+    this.setState({tags: tags});
+  }
+
+  handleDrag(tag, currPos, newPos) {
+    var tags = this.state.tags;
+
+    // mutate array
+    tags.splice(currPos, 1);
+    tags.splice(newPos, 0, tag);
+
+    // re-render
+    this.setState({ tags: tags });
+  }
+
   render() {
+    var ReactTags = require('react-tag-input').WithContext;
+    var tags = this.state.tags;
 
     return (
       <div id="add-student">
@@ -104,11 +145,17 @@ class AddStudentForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <label className="control-label col-sm-4" htmlFor="name">Enter any high-frequency words (comma-separated):</label>
-          <div className="col-sm-8">
-            <input type="text" className="form-control" id="name" onChange={this.hfwChange} placeholder="ex. this, that"/>
+          <label className="control-label col-sm-4" htmlFor="name">Enter 8 high-frequency words (comma-separated):</label>
+          <div className="col-sm-8 list">
+            <ReactTags tags={tags}
+                handleDelete={this.handleDelete}
+                handleAddition={this.handleAddition}
+                handleDrag={this.handleDrag}
+                placeholder="word">
+            </ReactTags>
           </div>
         </div>
+
 
         <div className="form-group">
           <label className="control-label col-sm-4" htmlFor="books">Pick any read books:</label>

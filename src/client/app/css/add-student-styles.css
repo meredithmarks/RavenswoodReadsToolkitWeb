@@ -24,10 +24,19 @@
 }
 
 .control-label{
-   float:left; 
-   vertical-align:middle;        
+   float: left; 
+   vertical-align: middle;        
 }
 
 .btn-primary {
 	background-color: rgba(74, 144, 226, 1);
+}
+
+
+#add-student div.ReactTags__selected span.ReactTags__tag {
+	font-size: 14px;
+}
+
+#add-student div.ReactTags__selected {
+	text-align: left;
 }

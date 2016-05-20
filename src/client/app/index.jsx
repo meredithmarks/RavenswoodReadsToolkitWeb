@@ -97,34 +97,34 @@ const App = React.createClass({
 
   handleNewLessonPlan(newLessonPlan) {
     console.log(newLessonPlan);
-    // this.firebaseRefs["lessonPlans"].push(newLessonPlan);
+    this.firebaseRefs["lessonPlans"].push(newLessonPlan);
 
-    this.firebaseRefs["lessonPlans"].push({
-      "brandNewReadingBook" : "Story Time",
-      "communicationActivity" : {
-        "notes" : "Talk through the story again to ensure comprehension. Have Lucas write an alternate ending to the story!",
-        "writingSample" : ""
-      },
-      "completed" : 1,
-      "date" : 1.461735987216195E9,
-      "notes" : "This was great, Lucas is great, everything is great!",
-      "phonicsActivity" : {
-        "game" : 4,
-        "notes" : "I think Lucas will have a bit of trouble with this concept, so make sure to be clear and repeat yourself!",
-        "otherDescription" : "",
-        "pattern1" : "Dd /d/",
-        "pattern2" : ""
-      },
-      "rereadingBooks" : [ "I Like to Count", "The Cat Came Back" ],
-      "title" : "Dd /d/",
-      "wordBankActivity" : {
-        "game" : 1,
-        "notes" : "I really want to make sure that Lucas gets all of these words today!",
-        "numNewWords" : 2,
-        "otherDescription" : "",
-        "wordList" : [ "was", "you", "all", "one", "the" ]
-      }
-    });
+    // this.firebaseRefs["lessonPlans"].push({
+    //   "brandNewReadingBook" : "Story Time",
+    //   "communicationActivity" : {
+    //     "notes" : "Talk through the story again to ensure comprehension. Have Lucas write an alternate ending to the story!",
+    //     "writingSample" : ""
+    //   },
+    //   "completed" : 1,
+    //   "date" : 1.461735987216195E9,
+    //   "notes" : "This was great, Lucas is great, everything is great!",
+    //   "phonicsActivity" : {
+    //     "game" : 4,
+    //     "notes" : "I think Lucas will have a bit of trouble with this concept, so make sure to be clear and repeat yourself!",
+    //     "otherDescription" : "",
+    //     "pattern1" : "Dd /d/",
+    //     "pattern2" : ""
+    //   },
+    //   "rereadingBooks" : [ "I Like to Count", "The Cat Came Back" ],
+    //   "title" : "Dd /d/",
+    //   "wordBankActivity" : {
+    //     "game" : 1,
+    //     "notes" : "I really want to make sure that Lucas gets all of these words today!",
+    //     "numNewWords" : 2,
+    //     "otherDescription" : "",
+    //     "wordList" : [ "was", "you", "all", "one", "the" ]
+    //   }
+    // });
 
     var backdrop = document.getElementsByClassName("wizard-backdrop")[0];
     backdrop.style.display = "none";
