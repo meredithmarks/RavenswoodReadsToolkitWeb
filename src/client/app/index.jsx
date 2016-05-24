@@ -131,6 +131,7 @@ const App = React.createClass({
   },
 
   render() {
+    var self = this;
     if (!this.baseRef.getAuth()) {
       console.log("User is logged out");
       return (
@@ -174,12 +175,11 @@ const App = React.createClass({
     this.state.lessonPlans.sort(function(a, b) { return  b['.key'] - a['.key']; });
   	var renderPlan = function(plan) {
   		if (plan) {
-  			return <LessonPlanDetail plan={plan} />;
+  			return <LessonPlanDetail plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]}/>;
   		} else {
-  			return "Click to see a lesson plan!";
+  			return <div></div>;
   		}
   	};
-    var self = this;
     var renderWizard = function() {
       return <WizardDetail student={self.state.student} handleNewLessonPlan={self.handleNewLessonPlan}/>;
     }
@@ -188,7 +188,10 @@ const App = React.createClass({
     window.onclick = function(event) {
       var backdrop = document.getElementsByClassName("wizard-backdrop")[0];
       var closeButton = document.getElementsByClassName("close")[0];
-      // var button = document.getElementsByClassName();
+      var executeModal = document.getElementById('execute-modal');
+      if (event.target == executeModal) {
+          executeModal.style.display = "none";
+      }
       if (event.target == backdrop || event.target == closeButton) {
           backdrop.style.display = "none";
       }

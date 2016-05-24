@@ -46,7 +46,7 @@ class LessonsSidebarComponent extends React.Component {
 
       </div>;
     } else {
-      return <row> No lesson plans found! </row>
+      return <div id="no-plans-found"> No lesson plans found! </div>
     }
 
   }

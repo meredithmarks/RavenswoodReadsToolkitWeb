@@ -6,6 +6,7 @@ class LessonPlanDetail extends React.Component {
   constructor(props) {
     super(props);
     this.mailto = this.mailto.bind(this);
+    this.submitExecutePlan = this.submitExecutePlan.bind(this);
   }
 
   _timestampToDate(timestamp) {
@@ -22,6 +23,48 @@ class LessonPlanDetail extends React.Component {
 
   mailto() {
     window.open('mailto:?subject=Ravenswood Reads Lesson:' + document.getElementById('lesson-plan-date').textContent + '&body=' + encodeURIComponent(document.getElementById('lesson-plan-all').textContent));
+  }
+
+  executePlan(event) {
+    var modal = document.getElementById('execute-modal');
+    modal.style.display = "block";
+
+    var span = document.getElementsByClassName("execute-close")[0];
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+  }
+
+  submitExecutePlan(event) {
+    event.preventDefault();
+    var notes = event.target[0].value.trim();
+    var key = this.props.plan['.key'];
+    this.props.studentRef.child('lessonPlans').child(key).update({
+      completed : true,
+      notes : notes
+    });
+    var readBooks = this.props.student.readBooks;
+    readBooks.push(this.props.plan.brandNewReadingBook);
+    var highFrequencyWords = this.props.student.highFrequencyWords;
+    console.log(highFrequencyWords);
+    for (var i = this.props.plan.wordBankActivity.numNewWords - 1; i >= 0; i--) {
+      highFrequencyWords.unshift(this.props.plan.wordBankActivity.wordList[i]);
+    }
+    console.log(highFrequencyWords);
+    var currentPhonicsPattern = this.props.student.currentPhonicsPattern;
+    if (Constants.PhonicsPatterns[currentPhonicsPattern] === this.props.plan.phonicsActivity.pattern1) {
+      currentPhonicsPattern++;
+    }
+    this.props.studentRef.update({
+      'currentPhonicsPattern' : currentPhonicsPattern,
+      'readBooks' : readBooks,
+      'highFrequencyWords' : highFrequencyWords
+    });
+
+    var modal = document.getElementById('execute-modal');
+    modal.style.display = "none";
+    return false;
   }
 
   render() {
@@ -108,9 +151,34 @@ class LessonPlanDetail extends React.Component {
 
     return (
       <div id="lesson-plan-all">
+
+        <div id="execute-modal" className="modal">
+          <div className="modal-content">
+            <span className="execute-close">×</span>
+            <form className="form-horizontal" onSubmit={this.submitExecutePlan}>
+
+              <div className="execute-question">
+                Great! How did this lesson go?
+                <br></br>
+
+                <div className="other-text">
+                  <textarea rows="3" className="form-control" placeholder="What went well? What could have gone better?" />
+                </div>
+              </div>
+            <div className="execute-question">
+              <button type="submit" className="btn btn-primary">Done!</button>
+            </div>
+          </form>
+          </div>
+        </div>
+
+
         <div id="action-icons">
           <span className="glyphicon glyphicon-send" onClick={this.mailto}></span>
           <a href="javascript:window.print()"><span className="glyphicon glyphicon-print"></span></a>
+          {!plan.completed &&
+            <span className="glyphicon glyphicon-check" onClick={this.executePlan}></span>}
+
         </div>
 
         <div id="lesson-plan-date"> {this._timestampToDate(plan.date)} </div>

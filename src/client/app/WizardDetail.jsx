@@ -121,6 +121,9 @@ class WizardDetail extends React.Component {
   handleWordBankNotesSubmit(event, id) {
     var activity = this.state.wordBankActivity;
     activity.notes = event.target.value.trim();
+    if (activity.notes == "") {
+      activity.notes = "Remember to demonstrate the activity first for your child!";
+    }
     this.setState({ wordBankActivity: activity });
     this.handleNext(event, id);
   }
@@ -152,7 +155,6 @@ class WizardDetail extends React.Component {
       activity.otherDescription = activityName;
       break;
     }
-    // TODO pattern1 and pattern2
     this.setState({ phonicsActivity: activity });
     this.handleNext(event, id);
   }
@@ -160,6 +162,9 @@ class WizardDetail extends React.Component {
   handlePhonicsNotesSubmit(event, id) {
     var activity = this.state.phonicsActivity;
     activity.notes = event.target.value.trim();
+    if (activity.notes == "") {
+      activity.notes = "Make sure your student knows the meaning of the words you discuss!";
+    }
     this.setState({ phonicsActivity: activity });
     this.handleNext(event, id);
   }

@@ -145,7 +145,7 @@ class AddStudentForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <label className="control-label col-sm-4" htmlFor="name">Enter 8 high-frequency words (comma-separated):</label>
+          <label className="control-label col-sm-4" htmlFor="name">Enter 8 high-frequency words:</label>
           <div className="col-sm-8 list">
             <ReactTags tags={tags}
                 handleDelete={this.handleDelete}
