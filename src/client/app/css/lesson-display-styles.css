@@ -2,6 +2,8 @@
 	background-color: white;
 	margin-top: 0;
 	padding: 30px;
+    overflow-y: auto;
+    height: 80%;
 }
 
 #lesson-plan-date {
