@@ -28,6 +28,7 @@ const App = React.createClass({
         self.bindAsObject(studentRef, "student");
         var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/" + student + "/lessonPlans/");
         self.bindAsArray(ref, "lessonPlans");
+        self.setState({ wizardKey: (new Date()).getTime() });
       } else {
         self.setState({ addingStudent: true })
       }
@@ -130,6 +131,8 @@ const App = React.createClass({
     backdrop.style.display = "none";
   },
 
+
+
   render() {
     var self = this;
     if (!this.baseRef.getAuth()) {
@@ -181,7 +184,12 @@ const App = React.createClass({
   		}
   	};
     var renderWizard = function() {
-      return <WizardDetail student={self.state.student} handleNewLessonPlan={self.handleNewLessonPlan}/>;
+
+      var updateWizardKey = function() {
+        self.state.wizardKey = (new Date()).getTime;
+      }
+
+      return <WizardDetail updateWizardKey={updateWizardKey} student={self.state.student} handleNewLessonPlan={self.handleNewLessonPlan}/>;
     }
 
     // When the user clicks anywhere outside of the modal, close it
@@ -221,7 +229,7 @@ const App = React.createClass({
           {renderPlan(this.state.selectedPlan)}
         </div>
 
-        <div className="wizard-backdrop">
+        <div className="wizard-backdrop" key={self.state.wizardKey}>
           {renderWizard()}
         </div>
 

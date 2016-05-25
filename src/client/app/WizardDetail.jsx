@@ -28,6 +28,8 @@ class WizardDetail extends React.Component {
     this.handleDateSubmit = this.handleDateSubmit.bind(this);
     this.handleLessonPlanDone = this.handleLessonPlanDone.bind(this);
 
+    // this.updateWizardKey = this.updateWizardKey.bind(this);
+
     this.booksRef = new Firebase("https://rrtoolkit.firebaseio.com/books");
   }
 
@@ -192,6 +194,8 @@ class WizardDetail extends React.Component {
     }
     event.preventDefault();
     this.props.handleNewLessonPlan(lessonPlan);
+
+    this.props.updateWizardKey();
   }
 
   render() {
