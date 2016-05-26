@@ -175,6 +175,7 @@ class LessonPlanDetail extends React.Component {
 
         <div id="action-icons">
           <span className="glyphicon glyphicon-send" onClick={this.mailto}></span>
+          <span className="mail-info"> Want to send emails using <a href="http://blog.hubspot.com/marketing/set-gmail-as-browser-default-email-client-ht#sm.000ja1qfn11npfivqdm14zpsmkk5r" target="_blank">gmail?</a></span>
           <a href="javascript:window.print()"><span className="glyphicon glyphicon-print"></span></a>
           {!plan.completed &&
             <span className="glyphicon glyphicon-check" onClick={this.executePlan}></span>}
