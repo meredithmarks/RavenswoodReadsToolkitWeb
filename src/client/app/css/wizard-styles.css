@@ -30,6 +30,23 @@
     overflow: auto;
 }
 
+.wizardGradient {
+    position: absolute;
+    height: 80%;
+    border: 1px solid #888;
+    top: 43px;
+    left: 270px;
+    right: 20px;
+    bottom: 20px;
+    overflow: auto;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0.6;
+
+    box-shadow: 0 -300px 50px -280px #fff inset, 0 300px 50px -280px #fff inset;
+}
+
+
 /* The Close Button */
 .wizard .close {
     position: fixed;

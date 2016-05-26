@@ -317,6 +317,7 @@ class WizardDetail extends React.Component {
             </div>
           </form>
         </div>
+        <div className="wizardGradient"> </div>
       </div>
     );
   }
