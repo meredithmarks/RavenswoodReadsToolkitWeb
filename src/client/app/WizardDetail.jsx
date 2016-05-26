@@ -309,7 +309,7 @@ class WizardDetail extends React.Component {
 
             {questions.map(
               (function(question) {
-                return <WizardQuestion key={question.index} question={question} />;
+                return <WizardQuestion key={question.index} question={question} choices={question.choices}/>;
               }).bind(this)
             )}
             <div className="form-group question" id={"question" + questions.length}>
@@ -319,9 +319,7 @@ class WizardDetail extends React.Component {
         </div>
       </div>
     );
-
   }
-
 }
 
 export default WizardDetail;

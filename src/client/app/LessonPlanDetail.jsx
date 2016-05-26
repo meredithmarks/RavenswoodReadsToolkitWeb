@@ -47,11 +47,9 @@ class LessonPlanDetail extends React.Component {
     var readBooks = this.props.student.readBooks;
     readBooks.push(this.props.plan.brandNewReadingBook);
     var highFrequencyWords = this.props.student.highFrequencyWords;
-    console.log(highFrequencyWords);
     for (var i = this.props.plan.wordBankActivity.numNewWords - 1; i >= 0; i--) {
       highFrequencyWords.unshift(this.props.plan.wordBankActivity.wordList[i]);
     }
-    console.log(highFrequencyWords);
     var currentPhonicsPattern = this.props.student.currentPhonicsPattern;
     if (Constants.PhonicsPatterns[currentPhonicsPattern] === this.props.plan.phonicsActivity.pattern1) {
       currentPhonicsPattern++;
@@ -64,6 +62,7 @@ class LessonPlanDetail extends React.Component {
 
     var modal = document.getElementById('execute-modal');
     modal.style.display = "none";
+    this.forceUpdate();
     return false;
   }
 

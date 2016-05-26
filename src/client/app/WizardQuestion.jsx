@@ -56,7 +56,7 @@ class WizardQuestion extends React.Component {
     event.preventDefault();
 
     var chosen = event.target.target;
-    var optionalChoice = this.state.question.choices[(this.state.question.choices.length - 1)];
+    var optionalChoice = this.props.choices[(this.props.choices.length - 1)];
     
     this.setState({ selectedChoice: chosen});
     if (!this.state.question.hasOptionalText || chosen != optionalChoice) {
@@ -131,7 +131,7 @@ class WizardQuestion extends React.Component {
           <div className="form-group">
             <div className="btn-group" data-toggle="buttons">
             <ButtonGroup>
-              {this.state.question.choices.map(
+              {this.props.choices.map(
                 (function(choice) {
                   return <Button key={choice} target={choice} onClick={this.chooseOneHandleNext} active={this.state.selectedChoice === choice}>{choice}</Button>;
                 }).bind(this)
@@ -140,7 +140,7 @@ class WizardQuestion extends React.Component {
             </div>
           </div>
 
-          { this.state.question.hasOptionalText && this.state.selectedChoice === this.state.question.choices[this.state.question.choices.length-1] && // or ? ______ : }
+          { this.state.question.hasOptionalText && this.state.selectedChoice === this.props.choices[this.props.choices.length-1] && // or ? ______ : }
             <div className="form-group  other-text">
                 <textarea rows="3" className="form-control" id={"custom-text-" + this.state.id} placeholder={this.props.question.placeholder} onBlur={this.handleTextAreaLoseFocus} onKeyUp={this.chooseOneCustomHandleKeyboard}/>
             </div>
