@@ -29,6 +29,7 @@ const App = React.createClass({
         var ref = new Firebase("https://rrtoolkit.firebaseio.com/students/" + student + "/lessonPlans/");
         self.bindAsArray(ref, "lessonPlans");
         self.setState({ wizardKey: (new Date()).getTime() });
+        self.setState({ planKey: (new Date()).getTime() });
       } else {
         self.setState({ addingStudent: true })
       }
@@ -42,7 +43,8 @@ const App = React.createClass({
   },
 
   setSelectedPlan: function(plan) {
-  	this.setState({selectedPlan: plan});
+  	this.setState({ selectedPlan: plan });
+    this.setState({ planKey: (new Date()).getTime() });
   },
 
   deleteLessonPlan: function(key) {
@@ -194,7 +196,7 @@ const App = React.createClass({
 
   	var renderPlan = function(plan) {
   		if (plan) {
-  			return <LessonPlanDetail plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]}/>;
+  			return <LessonPlanDetail key={self.state.planKey} plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]}/>;
   		} else {
   			return <div></div>;
   		}
