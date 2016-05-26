@@ -85,6 +85,7 @@ class LessonPlanDetail extends React.Component {
     this.props.plan.completed = true;
     this.props.plan['notes'] = notes;
     this.forceUpdate();
+    this.props.updateWizardKey();
     return false;
   }
 
