@@ -43,7 +43,7 @@
     z-index: 4;
     opacity: 0.6;
 
-    box-shadow: 0 -300px 50px -280px #fff inset, 0 300px 50px -80px #fff inset;
+    box-shadow: 0 -300px 50px -150px #fff inset, 0 300px 50px -150px #fff inset;
 }
 
 
