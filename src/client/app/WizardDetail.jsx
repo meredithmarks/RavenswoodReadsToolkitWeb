@@ -76,6 +76,8 @@ class WizardDetail extends React.Component {
     }
     this.setState({ title: title });
     this.handleNext(event, id);
+
+    this.forceUpdate();
   }
 
   handleRereadingSubmit(event, id) {
@@ -213,22 +215,20 @@ class WizardDetail extends React.Component {
       });
     }
 
+    var self = this;
     var newBookOptions = [];
     this.booksRef.once("value", function(data) {
       data.forEach(function(bookSnapshot) {
         var name = bookSnapshot.key();
-        // bookSnapshot.orderByChild("patterns/").once("value", function(snapshot) {
-        //   snapshot.forEach(function(pattern) {
-        //     console.log(pattern.val());
-        //   });
-        // });
-        // TODO: get this filtering to work
-        newBookOptions.push({ value: name, label: name});
+        var book = bookSnapshot.val();
+        if (book.patterns.includes(self.state.title)) {
+          newBookOptions.push({ value: name, label: name});
+        }
       });
     });
 
     var phonicsOptions = ['Letter Tiles', 'Other'];
-    if (this.props.student.currentPhonicsPattern <= 20) { // Emergent TODO: this should actually depend on title
+    if (Constants.PhonicsPatterns.indexOf(this.state.title) <= 20) { // Emergent
       phonicsOptions = ['Rainbow Writing', 'Picture Sort', 'Other'];
     }
 
