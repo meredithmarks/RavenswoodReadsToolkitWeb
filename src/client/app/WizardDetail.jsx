@@ -218,8 +218,9 @@ class WizardDetail extends React.Component {
       data.forEach(function(bookSnapshot) {
         var name = bookSnapshot.key();
         var book = bookSnapshot.val();
+        var nameAndLabel = name + " (" + book.level + ")";
         if (book.patterns.includes(self.state.title)) {
-          newBookOptions.push({ value: name, label: name});
+          newBookOptions.push({ value: name, label: nameAndLabel });
         }
       });
     });

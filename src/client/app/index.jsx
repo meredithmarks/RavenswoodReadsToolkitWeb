@@ -43,7 +43,7 @@ const App = React.createClass({
   },
 
   setSelectedPlan: function(plan) {
-  	this.setState({ selectedPlan: plan });
+    this.setState({ selectedPlan: plan });
     this.setState({ planKey: (new Date()).getTime() });
   },
 
@@ -197,7 +197,7 @@ const App = React.createClass({
   	var renderPlan = function(plan) {
   		if (plan) {
         var updateWizardKey = function() {
-          self.state.wizardKey = (new Date()).getTime;
+          self.state.wizardKey = (new Date()).getTime();
         }
   			return <LessonPlanDetail key={self.state.planKey} plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]} updateWizardKey={updateWizardKey}/>;
   		} else {
@@ -207,7 +207,7 @@ const App = React.createClass({
     var renderWizard = function() {
 
       var updateWizardKey = function() {
-        self.state.wizardKey = (new Date()).getTime;
+        self.state.wizardKey = (new Date()).getTime();
       }
 
       return <WizardDetail updateWizardKey={updateWizardKey} student={self.state.student} handleNewLessonPlan={self.handleNewLessonPlan}/>;
