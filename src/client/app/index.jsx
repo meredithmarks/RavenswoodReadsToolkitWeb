@@ -87,7 +87,6 @@ const App = React.createClass({
     this.bindAsObject(studentRef, "student");
 
     var ref = newStudentRef.child("lessonPlans");
-    console.log("addStudent");
     this.bindAsArray(ref, "lessonPlans");
     this.setState({addingStudent: false});
   },
@@ -175,10 +174,7 @@ const App = React.createClass({
       return <div></div>;
     }
 
-    // console.log("sorting is happening")
-    // // logged in, has child
-    // console.log(this.state.lessonPlans[1]['.key'])
-    // this.state.lessonPlans.sort(function(a, b) { return  b['date'] - a['date'];
+    // logged in, has child
     this.state.lessonPlans.sort(function(a, b) { 
       if (a.date != b.date) {
         return b.date - a.date;
@@ -196,7 +192,6 @@ const App = React.createClass({
       }
     });
 
-    console.log(this.state.lessonPlans[2]['.key']);
   	var renderPlan = function(plan) {
   		if (plan) {
   			return <LessonPlanDetail plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]}/>;
