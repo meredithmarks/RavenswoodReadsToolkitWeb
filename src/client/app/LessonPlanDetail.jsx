@@ -21,8 +21,28 @@ class LessonPlanDetail extends React.Component {
     return day + ', ' + month + ' ' + date + ', ' + year;
   }
 
+  getText($node) {
+    var self = this;
+    return $node.contents().map(function () {
+        if (this.nodeName === 'BR') {
+            return "\n";
+        } else if (this.nodeType === 3) {
+          return this.nodeValue;
+        } else {
+          if (this.nodeName === 'DIV') {
+            return "\n" + self.getText($(this));
+          } else if (this.nodeName === 'LI') {
+            return "\n    " + self.getText($(this));
+          } else {
+            return self.getText($(this));
+          }
+        }
+    }).get().join('');
+  }
+
   mailto() {
-    window.open('mailto:?subject=Ravenswood Reads Lesson:' + document.getElementById('lesson-plan-date').textContent + '&body=' + encodeURIComponent(document.getElementById('lesson-plan-all').textContent));
+    var body = this.getText($('#lesson-plan-content'));
+    window.open('mailto:?subject=Ravenswood Reads Lesson: ' + $('#lesson-plan-date').text() + '&body=' + encodeURIComponent(body));
   }
 
   executePlan(event) {
@@ -183,41 +203,43 @@ class LessonPlanDetail extends React.Component {
 
         </div>
 
-        <div id="lesson-plan-date"> {this._timestampToDate(plan.date)} </div>
-        <h2 id="lesson-plan-title">Phonics: {plan.title}</h2>
-        <div className="section-title">
-          Revisiting Familiar Texts:
-        </div>
-        <ul className="section-details">
-          <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks.join(", ")}</i></li>
-        </ul>
+        <div id="lesson-plan-content">
+          <div id="lesson-plan-date">{this._timestampToDate(plan.date)}</div>
+          <div><h2 id="lesson-plan-title">Phonics: {plan.title}</h2></div>
+          <div className="section-title">
+            Revisiting Familiar Texts:
+          </div>
+          <ul className="section-details">
+            <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks.join(", ")}</i></li>
+          </ul>
 
-        <div className="section-title">
-          Word Study:
-        </div>
-        <ul className="section-details">
-          <li><span className="sub-section-header">Word bank activity:</span> {renderWordBankActivity(plan.wordBankActivity)}</li>
-          <li><span className="sub-section-header">Phonics activity:</span> {renderPhonicsActivity(plan.phonicsActivity)}</li>
-        </ul>
+          <div className="section-title">
+            Word Study:
+          </div>
+          <ul className="section-details">
+            <li><span className="sub-section-header">Word bank activity:</span> {renderWordBankActivity(plan.wordBankActivity)}</li>
+            <li><span className="sub-section-header">Phonics activity:</span> {renderPhonicsActivity(plan.phonicsActivity)}</li>
+          </ul>
 
-        <div className="section-title">
-          New Reading / Sharing a Book:
-        </div>
-        <ul className="section-details">
-          <li><span className="sub-section-header">Book Title:</span> <i>{plan.brandNewReadingBook}</i></li>
-          <li><span className="sub-section-header">Introduction:</span> Picture walk through the book, asking questions about what might happen.</li>
-          <li><span className="sub-section-header">During reading:</span> Make sure your student is pointing to the words as they read! Ask comprehension questions as you go along together.</li>
-          <li><span className="sub-section-header">After reading:</span> Ask for a summary of what happened in the book. Have them point out their favorite page!</li>
-        </ul>
+          <div className="section-title">
+            New Reading / Sharing a Book:
+          </div>
+          <ul className="section-details">
+            <li><span className="sub-section-header">Book Title:</span> <i>{plan.brandNewReadingBook}</i></li>
+            <li><span className="sub-section-header">Introduction:</span> Picture walk through the book, asking questions about what might happen.</li>
+            <li><span className="sub-section-header">During reading:</span> Make sure your student is pointing to the words as they read! Ask comprehension questions as you go along together.</li>
+            <li><span className="sub-section-header">After reading:</span> Ask for a summary of what happened in the book. Have them point out their favorite page!</li>
+          </ul>
 
-        <div className="section-title">
-          Communication:
-        </div>
-        <ul className="section-details">
-          <li><span className="sub-section-header">Notes:</span> {plan.communicationActivity.notes}</li>
-        </ul>
+          <div className="section-title">
+            Communication:
+          </div>
+          <ul className="section-details">
+            <li><span className="sub-section-header">Notes:</span> {plan.communicationActivity.notes}</li>
+          </ul>
 
-        {renderNotes(plan)}
+          {renderNotes(plan)}
+        </div>
       </div>
     );
   }
