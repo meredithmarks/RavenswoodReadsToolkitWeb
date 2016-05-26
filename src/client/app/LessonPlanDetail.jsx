@@ -62,6 +62,8 @@ class LessonPlanDetail extends React.Component {
 
     var modal = document.getElementById('execute-modal');
     modal.style.display = "none";
+    this.props.plan.completed = true;
+    this.props.plan['notes'] = notes;
     this.forceUpdate();
     return false;
   }
