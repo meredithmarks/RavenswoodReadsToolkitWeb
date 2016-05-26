@@ -28,8 +28,6 @@ class WizardDetail extends React.Component {
     this.handleDateSubmit = this.handleDateSubmit.bind(this);
     this.handleLessonPlanDone = this.handleLessonPlanDone.bind(this);
 
-    // this.updateWizardKey = this.updateWizardKey.bind(this);
-
     this.booksRef = new Firebase("https://rrtoolkit.firebaseio.com/books");
   }
 
@@ -201,7 +199,6 @@ class WizardDetail extends React.Component {
   }
 
   render() {
-
     var focusOptions = ['Begin ' + Constants.PhonicsPatterns[this.props.student.currentPhonicsPattern]];
     if (this.props.student.currentPhonicsPattern > 0) {
       focusOptions.unshift('Review ' + Constants.PhonicsPatterns[this.props.student.currentPhonicsPattern - 1]);

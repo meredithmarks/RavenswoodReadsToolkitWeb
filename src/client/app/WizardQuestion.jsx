@@ -184,7 +184,6 @@ class WizardQuestion extends React.Component {
               />
             </div>
           </div>
-
         </div>
       );
     } else if (this.state.question.type == 'Select') {
@@ -204,7 +203,6 @@ class WizardQuestion extends React.Component {
               />
             </div>
           </div>
-
         </div>
       );
     } else if (this.state.question.type == 'Text') {

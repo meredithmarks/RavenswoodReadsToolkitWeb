@@ -194,7 +194,10 @@ const App = React.createClass({
 
   	var renderPlan = function(plan) {
   		if (plan) {
-  			return <LessonPlanDetail plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]}/>;
+        var updateWizardKey = function() {
+          self.state.wizardKey = (new Date()).getTime;
+        }
+  			return <LessonPlanDetail plan={plan} student={self.state.student} studentRef={self.firebaseRefs["student"]} updateWizardKey={updateWizardKey}/>;
   		} else {
   			return <div></div>;
   		}
