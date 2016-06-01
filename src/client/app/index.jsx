@@ -33,35 +33,43 @@ const App = React.createClass({
 
         ref.once("value", function(snapshot) {
           self.state.lessonPlans.sort(function(a, b) { 
-          if (a.date != b.date) {
-            return b.date - a.date;
-          }
+            if (a.completed && !b.completed) {
+              return -1;
+            } else if (!a.completed && b.completed) {
+              return 1;
+            }
 
-          var aKey = a['.key'];
-          var bKey = b['.key'];
+            if (a.date != b.date) {
+              // return b.date - a.date;
+              return a.completed ? b.date - a.date : a.date - b.date;
+            }
 
-          if (aKey < bKey) {
-            return 1;
-          } else if (aKey > bKey) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
+            var aKey = a['.key'];
+            var bKey = b['.key'];
 
-        var firstListedLessonPlan;
-        for (var i = 0; i < self.state.lessonPlans.length; i++) {
-          var curr = self.state.lessonPlans[i];
-          if (firstListedLessonPlan == undefined) {
-            firstListedLessonPlan = curr;
-            if (!curr.completed) break;
-          } else if (firstListedLessonPlan.completed && !curr.completed) {
-            firstListedLessonPlan = curr;
-            break;
+
+            if (aKey < bKey) {
+              return 1;
+            } else if (aKey > bKey) {
+              return -1;
+            } else {
+              return 0;
+            }
+          });
+
+          var firstListedLessonPlan;
+          for (var i = 0; i < self.state.lessonPlans.length; i++) {
+            var curr = self.state.lessonPlans[i];
+            if (firstListedLessonPlan == undefined) {
+              firstListedLessonPlan = curr;
+              if (!curr.completed) break;
+            } else if (firstListedLessonPlan.completed && !curr.completed) {
+              firstListedLessonPlan = curr;
+              break;
+            }
           }
-        }
-        self.setState({ selectedPlan: firstListedLessonPlan });
-      })        
+          self.setState({ selectedPlan: firstListedLessonPlan });
+        })        
         // logged in, has child
 
 
@@ -212,22 +220,29 @@ const App = React.createClass({
     }
 
     // logged in, has child
-    this.state.lessonPlans.sort(function(a, b) { 
-      if (a.date != b.date) {
-        return b.date - a.date;
-      }
+    // this.state.lessonPlans.sort(function(a, b) { 
+    //   if (a.completed && !b.completed) {
+    //     return -1;
+    //   } else if (!a.completed && b.completed) {
+    //     return 1;
+    //   }
 
-      var aKey = a['.key'];
-      var bKey = b['.key'];
+    //   if (a.date != b.date) {
+    //     return a.completed ? b.date - a.date : a.date = b.date;
+    //   }
 
-      if (aKey < bKey) {
-        return 1;
-      } else if (aKey > bKey) {
-        return -1;
-      } else {
-        return 0;
-      }
-    });
+    //   var aKey = a['.key'];
+    //   var bKey = b['.key'];
+
+
+    //   if (aKey < bKey) {
+    //     return 1;
+    //   } else if (aKey > bKey) {
+    //     return -1;
+    //   } else {
+    //     return 0;
+    //   }
+    // });
 
   	var renderPlan = function(plan) {
   		if (plan) {
