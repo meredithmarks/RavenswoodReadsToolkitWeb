@@ -80,6 +80,24 @@ class WizardDetail extends React.Component {
       title = event.target.value.trim();
     }
     this.setState({ title: title });
+
+    // update phonics activity with new patterns
+    if (typeof this.state.phonicsActivity.game != undefined) {
+      var activity = this.state.phonicsActivity;
+      activity.pattern1 = title;
+      switch (activity.game) {
+        case Constants.PictureSortNum:
+          var index = Constants.PhonicsPatterns.indexOf(title);
+          index = index === 0 ? 1 : index - 1;
+          activity.pattern2 = Constants.PhonicsPatterns[index];
+        default:
+          activity.pattern2 = "";
+          break;
+      }
+
+      this.setState({ phonicsActivity: activity });
+    }
+
     this.handleNext(event, id);
 
     this.forceUpdate();
