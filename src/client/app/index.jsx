@@ -16,6 +16,31 @@ const App = React.createClass({
 
   baseRef: new Firebase("https://rrtoolkit.firebaseio.com"),
 
+  lessonPlanSort: function(a, b) {
+    if (a.completed && !b.completed) {
+      return -1;
+    } else if (!a.completed && b.completed) {
+      return 1;
+    }
+
+    if (a.date != b.date) {
+      // return b.date - a.date;
+      return a.completed ? b.date - a.date : a.date - b.date;
+    }
+
+    var aKey = a['.key'];
+    var bKey = b['.key'];
+
+
+    if (aKey < bKey) {
+      return 1;
+    } else if (aKey > bKey) {
+      return -1;
+    } else {
+      return 0;
+    }
+  },
+
   _checkIfUserExists: function(authData, self) {
     var usersRef = this.baseRef.child("users");
     usersRef.once("value", function(snapshot) {
@@ -33,28 +58,7 @@ const App = React.createClass({
 
         ref.once("value", function(snapshot) {
           self.state.lessonPlans.sort(function(a, b) { 
-            if (a.completed && !b.completed) {
-              return -1;
-            } else if (!a.completed && b.completed) {
-              return 1;
-            }
-
-            if (a.date != b.date) {
-              // return b.date - a.date;
-              return a.completed ? b.date - a.date : a.date - b.date;
-            }
-
-            var aKey = a['.key'];
-            var bKey = b['.key'];
-
-
-            if (aKey < bKey) {
-              return 1;
-            } else if (aKey > bKey) {
-              return -1;
-            } else {
-              return 0;
-            }
+            return self.lessonPlanSort(a, b);
           });
 
           var firstListedLessonPlan;
@@ -69,7 +73,7 @@ const App = React.createClass({
             }
           }
           self.setState({ selectedPlan: firstListedLessonPlan });
-        })        
+        });     
         // logged in, has child
 
 
@@ -144,6 +148,9 @@ const App = React.createClass({
 
   handleNewLessonPlan(newLessonPlan) {
     this.firebaseRefs["lessonPlans"].push(newLessonPlan);
+    
+    // TODO: time this so that it will also update the blue selection bar
+    this.setSelectedPlan(newLessonPlan);
 
     // this.firebaseRefs["lessonPlans"].push({
     //   "brandNewReadingBook" : "Story Time",
@@ -220,29 +227,9 @@ const App = React.createClass({
     }
 
     // logged in, has child
-    // this.state.lessonPlans.sort(function(a, b) { 
-    //   if (a.completed && !b.completed) {
-    //     return -1;
-    //   } else if (!a.completed && b.completed) {
-    //     return 1;
-    //   }
-
-    //   if (a.date != b.date) {
-    //     return a.completed ? b.date - a.date : a.date = b.date;
-    //   }
-
-    //   var aKey = a['.key'];
-    //   var bKey = b['.key'];
-
-
-    //   if (aKey < bKey) {
-    //     return 1;
-    //   } else if (aKey > bKey) {
-    //     return -1;
-    //   } else {
-    //     return 0;
-    //   }
-    // });
+    this.state.lessonPlans.sort(function(a, b) { 
+      return self.lessonPlanSort(a, b);
+    });
 
   	var renderPlan = function(plan) {
   		if (plan) {
