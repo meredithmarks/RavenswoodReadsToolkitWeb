@@ -58,6 +58,7 @@
     /*margin-right: 18px;*/
     top: 120px;
     right: 43px;
+    z-index: 6;
 }
 
 .wizard .close:hover,
