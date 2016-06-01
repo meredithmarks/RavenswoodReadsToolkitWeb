@@ -81,6 +81,9 @@ class WizardDetail extends React.Component {
     }
     this.setState({ title: title });
 
+    // TODO: this is buggy in an off edge-case. 
+    //       Fix to just reset phonics activity to unset!
+
     // update phonics activity with new patterns
     if (typeof this.state.phonicsActivity.game != undefined) {
       var activity = this.state.phonicsActivity;
@@ -97,6 +100,9 @@ class WizardDetail extends React.Component {
 
       this.setState({ phonicsActivity: activity });
     }
+
+    // solution 2:
+    // this.setState({ phonicsActivity: { game: undefined } });
 
     this.handleNext(event, id);
 
