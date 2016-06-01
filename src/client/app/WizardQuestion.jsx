@@ -124,6 +124,9 @@ class WizardQuestion extends React.Component {
     if (this.state.question.type == 'ChooseOne') {
       return ( 
         <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.required && 
+            <span className="required">* </span>
+          }
           { this.state.question.text }
           <br></br>
 
@@ -152,6 +155,9 @@ class WizardQuestion extends React.Component {
         var tags = this.state.tags;
         return (
           <div className="question well" id={"question" + this.state.id}>
+            { this.state.question.required && 
+              <span className="required">* </span>
+            }
             { this.state.question.text }
             <br></br>
             <div className = "list">
@@ -167,6 +173,9 @@ class WizardQuestion extends React.Component {
     } else if (this.state.question.type == 'ChooseMultiple') {
       return ( 
         <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.required && 
+            <span className="required">* </span>
+          }
           { this.state.question.text }
           <br></br>
 
@@ -188,6 +197,9 @@ class WizardQuestion extends React.Component {
     } else if (this.state.question.type == 'Select') {
       return ( 
         <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.required && 
+            <span className="required">* </span>
+          }
           { this.state.question.text }
           <br></br>
 
@@ -207,6 +219,9 @@ class WizardQuestion extends React.Component {
     } else if (this.state.question.type == 'Text') {
       return (
         <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.required && 
+            <span className="required">* </span>
+          }
           { this.state.question.text }
           <br></br>
 
@@ -218,6 +233,9 @@ class WizardQuestion extends React.Component {
     } else if (this.state.question.type == 'Date') {
       return (
         <div className="question well" id={"question" + this.state.id}>
+          { this.state.question.required && 
+            <span className="required">* </span>
+          }
           { this.state.question.text }
           <br></br>
 

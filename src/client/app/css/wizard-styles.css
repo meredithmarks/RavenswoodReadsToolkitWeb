@@ -111,3 +111,8 @@ textarea {
 .wizard input {
     width: 150px;
 }
+
+.wizard .required {
+    font-size: 16pt;
+    color: red;
+}

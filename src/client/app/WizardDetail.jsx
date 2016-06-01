@@ -329,7 +329,8 @@ class WizardDetail extends React.Component {
                       text : "What would you like to focus on today?",
                       placeholder : "Enter what you will teach today here",
                       choices : focusOptions,
-                      handleSubmit : this.handleFocusSubmit
+                      handleSubmit : this.handleFocusSubmit,
+                      required: true
                     };
     var question1 = { index : 1, 
                       type : 'ChooseMultiple',
@@ -338,12 +339,14 @@ class WizardDetail extends React.Component {
                       choices : bookOptions,
                       values: "",
                       wordBankQuestion: false,
-                      handleSubmit : this.handleRereadingSubmit
+                      handleSubmit : this.handleRereadingSubmit,
+                      required: false
                     };
     var question2 = { index : 2,
                       type : 'List',
                       text : 'What new high frequency words will you introduce?',
-                      handleSubmit : this.handleWordBankWordsSubmit
+                      handleSubmit : this.handleWordBankWordsSubmit,
+                      required: false
                     };
     var question3 = { index : 3,
                       type : 'ChooseOne',
@@ -351,7 +354,8 @@ class WizardDetail extends React.Component {
                       text : 'What word bank activity would you like to do today?',
                       placeholder : 'Describe your activity here!',
                       choices : ['Bingo', 'Memory', 'Letter Tiles', 'Other'],
-                      handleSubmit : this.handleWordBankSubmit
+                      handleSubmit : this.handleWordBankSubmit,
+                      required: true
                     };
     var question4 = { index : 4, 
                       type : 'ChooseMultiple',
@@ -361,13 +365,15 @@ class WizardDetail extends React.Component {
                       values: selectedWordBankWords,
                       update: this.state.updatedWordList,
                       wordBankQuestion: true,
-                      handleSubmit : this.handleWordBankActivityWordsSubmit
+                      handleSubmit : this.handleWordBankActivityWordsSubmit,
+                      required: true
                     };
     var question5 = { index : 5,
                       type : 'Text',
                       text : 'Any other notes for your word bank activity?',
                       placeholder : 'Make sure your student knows the meaning of the words you discuss!',
-                      handleSubmit : this.handleWordBankNotesSubmit
+                      handleSubmit : this.handleWordBankNotesSubmit,
+                      required: false
                     };
     var question6 = { index : 6,
                       type : 'ChooseOne',
@@ -375,31 +381,36 @@ class WizardDetail extends React.Component {
                       placeholder : 'Describe your activity here!',
                       text : 'What phonics activity would you like to do?',
                       choices : phonicsOptions,
-                      handleSubmit : this.handlePhonicsSubmit
+                      handleSubmit : this.handlePhonicsSubmit,
+                      required: true
                     };
     var question7 = { index : 7,
                       type : 'Text',
                       text : 'Any other notes for your phonics activity?',
                       placeholder : 'Remember to demonstrate the activity first for your child!',
-                      handleSubmit : this.handlePhonicsNotesSubmit
+                      handleSubmit : this.handlePhonicsNotesSubmit,
+                      required: false
                     };
     var question8 = { index : 8,
                       type : 'Select',
                       hasOptionalText : false,
                       text : "What new book would you like to read?",
                       choices : newBookOptions,
-                      handleSubmit : this.handleNewReadingSubmit
+                      handleSubmit : this.handleNewReadingSubmit,
+                      required: true
                     };
     var question9 = { index : 9,
                       type : 'Text',
                       text : 'What would you like to write about today?',
                       placeholder : 'Write a story, a letter, or anything else you can think of!',
-                      handleSubmit : this.handleCommunicationSubmit
+                      handleSubmit : this.handleCommunicationSubmit,
+                      required: true
                     };
     var question10 = { index : 10,
                       type : 'Date',
                       text : 'What day is this lesson for?',
-                      handleSubmit : this.handleDateSubmit
+                      handleSubmit : this.handleDateSubmit,
+                      required: true
                     };
     var questions = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9, question10];
 
