@@ -65,7 +65,12 @@ class WizardDetail extends React.Component {
     scrollToIndex(nextId);
   }
 
-  handleFocusSubmit(event, id) {
+  handleFocusSubmit(event, id, otherJustSelected) {
+    if (otherJustSelected) {
+      this.setState({ title: undefined });
+      return;
+    }
+
     var title = event.target.target;
     if (title) {
       title = title.substring(title.indexOf(' ') + 1);
@@ -96,9 +101,15 @@ class WizardDetail extends React.Component {
     // TODO: should we now show the word list as tags and let the user change them?
   }
 
-  handleWordBankSubmit(event, id) {
-    var activityName = event.target.target ? event.target.target : event.target.value.trim()
+  handleWordBankSubmit(event, id, otherJustSelected) {
     var activity = this.state.wordBankActivity;
+    if (otherJustSelected) {
+      activity.game = undefined
+      this.setState({ wordBankActivity: activity });
+      return;
+    }
+
+    var activityName = event.target.target ? event.target.target : event.target.value.trim()
     switch (activityName) {
       case 'Bingo':
       activity.game = Constants.BingoNum;
@@ -128,9 +139,15 @@ class WizardDetail extends React.Component {
     this.handleNext(event, id);
   }
 
-  handlePhonicsSubmit(event, id) {
-    var activityName = event.target.target ? event.target.target : event.target.value.trim()
+  handlePhonicsSubmit(event, id, otherJustSelected) {
     var activity = this.state.phonicsActivity;
+    if (otherJustSelected) {
+      activity.game = undefined
+      this.setState({ phonicsActivity: activity });
+      return;
+    }
+
+    var activityName = event.target.target ? event.target.target : event.target.value.trim()
     activity.pattern1 = this.state.title;
     activity.pattern2 = "";
     switch (activityName) {
@@ -185,15 +202,53 @@ class WizardDetail extends React.Component {
   }
 
   handleLessonPlanDone(event) {
-    console.log("here!");
+
+    function isUndefined(x) {
+      return typeof x == 'undefined';
+    }
+
+    function validate() {
+      var errorString = "";
+
+      // focus
+      errorString += isUndefined(lessonPlan.title) ? "\t∙ Lesson Focus\n" : "";
+
+      // word bank activity
+      errorString += isUndefined(lessonPlan.wordBankActivity.game) && 
+                      lessonPlan.wordBankActivity.otherDescription == "" 
+                      ? "\t∙ Word Bank Activity\n" : ""
+      
+      // phonics activity
+      errorString += isUndefined(lessonPlan.phonicsActivity.game) && 
+                      lessonPlan.phonicsActivity.otherDescription == "" 
+                      ? "\t∙ Phonics Activity\n" : ""
+      
+      errorString += isUndefined(lessonPlan.brandNewReadingBook) ? "\t∙ New Reading Book\n" : "";
+      errorString += isUndefined(lessonPlan.communicationActivity) ? "\t∙ Communication Activity\n" : "";
+      errorString += isUndefined(lessonPlan.date) ? "\t∙ Date\n" : "";
+
+      if (errorString != "") {
+        event.preventDefault();
+        alert("The following were not completed:\n\n" + errorString);
+      }
+      return false;
+    }
+
     var lessonPlan = this.state;
-    console.log(lessonPlan.wordBankActivity);
-    // if (true) {
+    console.log(lessonPlan);
+    
+    if (!validate()) {
+      return;
+    }
+
+    // if (!(hasWordBankActivity && hasNewReading && hasFocus && hasPhonicsActivity && hasCommunicationActivity && hasDate)) {
     //   event.preventDefault();
-    //   // return;
+    //   alert("Error: All lesson plans must have a focus, word bank and phonics activities, a new reading book, a communications activity, and a date.");
+    //   return;
     // }
 
-    if (lessonPlan.wordBankActivity.wordList.length > 5 &&
+    if (typeof lessonPlan.wordBankActivity.wordList != 'undefined' &&
+          lessonPlan.wordBankActivity.wordList.length > 5 &&
           lessonPlan.wordBankActivity.game !== Constants.BingoNum) {
       lessonPlan.wordBankActivity.wordList = lessonPlan.wordBankActivity.wordList.splice(0, 5);
     }
@@ -230,6 +285,14 @@ class WizardDetail extends React.Component {
           newBookOptions.push({ value: name, label: nameAndLabel });
         }
       });
+      if (newBookOptions.length == 0) {
+        data.forEach(function(bookSnapshot) {
+        var name = bookSnapshot.key();
+        var book = bookSnapshot.val();
+        var nameAndLabel = name + " (" + book.level + ")";
+        newBookOptions.push({ value: name, label: nameAndLabel });
+      });
+      }
     });
 
     var phonicsOptions = ['Letter Tiles', 'Other'];

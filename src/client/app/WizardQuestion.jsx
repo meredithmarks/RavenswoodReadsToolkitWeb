@@ -35,8 +35,8 @@ class WizardQuestion extends React.Component {
     this.handleDatePickerChange = this.handleDatePickerChange.bind(this);
   }
 
-  handleNext(event) {
-    this.props.question.handleSubmit(event, this.state.id);
+  handleNext(event, otherJustSelected=false) {
+    this.props.question.handleSubmit(event, this.state.id, otherJustSelected);
   }
 
   // If someone types enter in a custom text box, go to the next question
@@ -59,9 +59,8 @@ class WizardQuestion extends React.Component {
     var optionalChoice = this.props.choices[(this.props.choices.length - 1)];
     
     this.setState({ selectedChoice: chosen});
-    if (!this.state.question.hasOptionalText || chosen != optionalChoice) {
-      this.handleNext(event);
-    }
+    this.handleNext(event, this.state.question.hasOptionalText && chosen == optionalChoice);
+    
   }
 
   /* 
