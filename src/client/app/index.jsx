@@ -30,6 +30,42 @@ const App = React.createClass({
         self.bindAsArray(ref, "lessonPlans");
         self.setState({ wizardKey: (new Date()).getTime() });
         self.setState({ planKey: (new Date()).getTime() });
+
+        ref.once("value", function(snapshot) {
+          self.state.lessonPlans.sort(function(a, b) { 
+          if (a.date != b.date) {
+            return b.date - a.date;
+          }
+
+          var aKey = a['.key'];
+          var bKey = b['.key'];
+
+          if (aKey < bKey) {
+            return 1;
+          } else if (aKey > bKey) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+
+        var firstListedLessonPlan;
+        for (var i = 0; i < self.state.lessonPlans.length; i++) {
+          var curr = self.state.lessonPlans[i];
+          if (firstListedLessonPlan == undefined) {
+            firstListedLessonPlan = curr;
+            if (!curr.completed) break;
+          } else if (firstListedLessonPlan.completed && !curr.completed) {
+            firstListedLessonPlan = curr;
+            break;
+          }
+        }
+        self.setState({ selectedPlan: firstListedLessonPlan });
+      })        
+        // logged in, has child
+
+
+
       } else {
         self.setState({ addingStudent: true })
       }
@@ -99,7 +135,6 @@ const App = React.createClass({
   },
 
   handleNewLessonPlan(newLessonPlan) {
-    console.log(newLessonPlan);
     this.firebaseRefs["lessonPlans"].push(newLessonPlan);
 
     // this.firebaseRefs["lessonPlans"].push({

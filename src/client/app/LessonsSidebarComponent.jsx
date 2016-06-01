@@ -6,11 +6,19 @@ class LessonsSidebarComponent extends React.Component {
   render() {
     var planned = [];
     var completed = [];
+    // var firstPlanned = undefined;
+    // var firstCompleted = undefined;
     this.props.plans.map(
       (function(plan) {
         if (plan.completed) {
+        //   if (typeof firstPlanned == undefined) {
+        //     firstPlanned = plan;
+        //   }
           completed.push(plan);
         } else {
+        //   if (typeof firstCompleted == undefined) {
+        //     firstCompleted = plan;
+        //   }
           planned.push(plan);
         }
       })
