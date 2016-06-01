@@ -71,6 +71,7 @@ class WizardQuestion extends React.Component {
     var tags = this.state.tags;
     tags.splice(i, 1);
     this.setState({tags: tags});
+    this.handleNext(tags);
   }
 
   handleAddition(tag) {
@@ -174,7 +175,7 @@ class WizardQuestion extends React.Component {
             <div>
               <Select
                 name="books"
-                value={this.state.values}
+                value={(typeof this.state.updatedWordList !== "undefined" && !this.state.updatedWordList) || !this.props.question.wordBankQuestion ? this.state.values : this.props.question.values}
                 multi={true}
                 options={this.props.question.choices}
                 simpleValue={true}

@@ -23,6 +23,7 @@ class WizardDetail extends React.Component {
     this.handleNewReadingSubmit = this.handleNewReadingSubmit.bind(this);
     this.handleCommunicationSubmit = this.handleCommunicationSubmit.bind(this);
     this.handleWordBankWordsSubmit = this.handleWordBankWordsSubmit.bind(this);
+    this.handleWordBankActivityWordsSubmit = this.handleWordBankActivityWordsSubmit.bind(this);
     this.handleWordBankNotesSubmit = this.handleWordBankNotesSubmit.bind(this);
     this.handlePhonicsNotesSubmit = this.handlePhonicsNotesSubmit.bind(this);
     this.handleDateSubmit = this.handleDateSubmit.bind(this);
@@ -89,11 +90,14 @@ class WizardDetail extends React.Component {
     event.map(function(word) {
       activity.wordList.push(word.text);
     });
-    for (var i = 0; i < 8 && i < this.props.student.highFrequencyWords.length; i++) {
+    var length = activity.wordList.length;
+    for (var i = 0; i < 8 - length && i < this.props.student.highFrequencyWords.length; i++) {
       activity.wordList.push(this.props.student.highFrequencyWords[i]);
     }
     this.setState({ wordBankActivity: activity });
-    // TODO: should we now show the word list as tags and let the user change them?
+    this.setState({ updatedWordList: true });
+    this.handleNext(event, id);
+    this.forceUpdate();
   }
 
   handleWordBankSubmit(event, id) {
@@ -116,6 +120,16 @@ class WizardDetail extends React.Component {
     }
     this.setState({ wordBankActivity: activity });
     this.handleNext(event, id);
+  }
+
+  handleWordBankActivityWordsSubmit(event, id) {
+    console.log(event);
+    var activity = this.state.wordBankActivity;
+    activity.wordList = event == null ? [] : event.split(";");
+    this.setState({ wordBankActivity: activity });
+    this.setState({ updatedWordList: false });
+    this.handleNext(event, id);
+    this.forceUpdate();
   }
 
   handleWordBankNotesSubmit(event, id) {
@@ -187,18 +201,10 @@ class WizardDetail extends React.Component {
   handleLessonPlanDone(event) {
     console.log("here!");
     var lessonPlan = this.state;
-    console.log(lessonPlan.wordBankActivity);
-    // if (true) {
-    //   event.preventDefault();
-    //   // return;
+    // if (lessonPlan.wordBankActivity.wordList.length > 5 &&
+    //       lessonPlan.wordBankActivity.game !== Constants.BingoNum) {
+    //   lessonPlan.wordBankActivity.wordList = lessonPlan.wordBankActivity.wordList.splice(0, 5);
     // }
-
-    if (lessonPlan.wordBankActivity.wordList.length > 5 &&
-          lessonPlan.wordBankActivity.game !== Constants.BingoNum) {
-      lessonPlan.wordBankActivity.wordList = lessonPlan.wordBankActivity.wordList.splice(0, 5);
-    }
-
-
     event.preventDefault();
     this.props.handleNewLessonPlan(lessonPlan);
 
@@ -216,6 +222,29 @@ class WizardDetail extends React.Component {
     if (this.props.student.readBooks !== "") {
       this.props.student.readBooks.map(function(name) {
         bookOptions.push({ value: name, label: name });
+      });
+    }
+
+    var activity = this.state.wordBankActivity;
+
+    var selected = []
+    if (typeof activity.wordList == "undefined") {
+      for (var i = 0; i < 8 && i < this.props.student.highFrequencyWords.length; i++) {
+        selected.push(this.props.student.highFrequencyWords[i]);
+      }
+    }
+    var selectedWordBankWords = typeof activity.wordList == "undefined" ? selected.join(";") : activity.wordList.join(";");
+    
+
+    var wordBankWordOptions = [];
+    this.props.student.highFrequencyWords.map(function(name) {
+      wordBankWordOptions.push({ value: name, label: name });
+    });
+    if (typeof activity.wordList !== "undefined") {
+      activity.wordList.map(function(name) {
+        if (!wordBankWordOptions.includes({ value: name, label: name })) {
+          wordBankWordOptions.push({ value: name, label: name });
+        }
       });
     }
 
@@ -250,11 +279,13 @@ class WizardDetail extends React.Component {
                       hasOptionalText : false,
                       text : "Which books would you like to reread?",
                       choices : bookOptions,
+                      values: "",
+                      wordBankQuestion: false,
                       handleSubmit : this.handleRereadingSubmit
                     };
     var question2 = { index : 2,
                       type : 'List',
-                      text : 'What new high-frequency words will you introduce?',
+                      text : 'What new high frequency words will you introduce?',
                       handleSubmit : this.handleWordBankWordsSubmit
                     };
     var question3 = { index : 3,
@@ -265,13 +296,23 @@ class WizardDetail extends React.Component {
                       choices : ['Bingo', 'Memory', 'Letter Tiles', 'Other'],
                       handleSubmit : this.handleWordBankSubmit
                     };
-    var question4 = { index : 4,
+    var question4 = { index : 4, 
+                      type : 'ChooseMultiple',
+                      hasOptionalText : false,
+                      text : "Which words would you like to use for your word bank activity?",
+                      choices : wordBankWordOptions,
+                      values: selectedWordBankWords,
+                      update: this.state.updatedWordList,
+                      wordBankQuestion: true,
+                      handleSubmit : this.handleWordBankActivityWordsSubmit
+                    };
+    var question5 = { index : 5,
                       type : 'Text',
                       text : 'Any other notes for your word bank activity?',
                       placeholder : 'Make sure your student knows the meaning of the words you discuss!',
                       handleSubmit : this.handleWordBankNotesSubmit
                     };
-    var question5 = { index : 5,
+    var question6 = { index : 6,
                       type : 'ChooseOne',
                       hasOptionalText : true,
                       placeholder : 'Describe your activity here!',
@@ -279,31 +320,31 @@ class WizardDetail extends React.Component {
                       choices : phonicsOptions,
                       handleSubmit : this.handlePhonicsSubmit
                     };
-    var question6 = { index : 6,
+    var question7 = { index : 7,
                       type : 'Text',
                       text : 'Any other notes for your phonics activity?',
                       placeholder : 'Remember to demonstrate the activity first for your child!',
                       handleSubmit : this.handlePhonicsNotesSubmit
                     };
-    var question7 = { index : 7,
+    var question8 = { index : 8,
                       type : 'Select',
                       hasOptionalText : false,
                       text : "What new book would you like to read?",
                       choices : newBookOptions,
                       handleSubmit : this.handleNewReadingSubmit
                     };
-    var question8 = { index : 8,
+    var question9 = { index : 9,
                       type : 'Text',
                       text : 'What would you like to write about today?',
                       placeholder : 'Write a story, a letter, or anything else you can think of!',
                       handleSubmit : this.handleCommunicationSubmit
                     };
-    var question9 = { index : 9,
+    var question10 = { index : 10,
                       type : 'Date',
-                      text : 'When is this lesson for?',
+                      text : 'What day is this lesson for?',
                       handleSubmit : this.handleDateSubmit
                     };
-    var questions = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9];
+    var questions = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9, question10];
 
     // The Modal
     return(
