@@ -211,7 +211,7 @@ class LessonPlanDetail extends React.Component {
             Revisiting Familiar Texts:
           </div>
           <ul className="section-details">
-            <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks.join(", ")}</i></li>
+            <li><span className="sub-section-header">Book Titles:</span> <i>{plan.rereadingBooks == null ? "" : plan.rereadingBooks.join(", ")}</i></li>
           </ul>
 
           <div className="section-title">
