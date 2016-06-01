@@ -80,7 +80,7 @@ class WizardQuestion extends React.Component {
         text: tag
     });
     this.setState({tags: tags});
-    console.log("not handling next");
+    this.handleNext(tags);
   }
 
   handleDrag(tag, currPos, newPos) {
@@ -99,6 +99,7 @@ class WizardQuestion extends React.Component {
    */
   chooseMultipleHandleNext(value) {
     this.setState({ values: value });
+    this.handleNext(value);
   }
 
   /*

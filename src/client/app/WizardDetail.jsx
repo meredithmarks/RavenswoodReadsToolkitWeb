@@ -80,7 +80,6 @@ class WizardDetail extends React.Component {
 
   handleRereadingSubmit(event, id) {
     this.setState({ rereadingBooks : event.split(";") });
-    this.handleNext(event, id);
   }
 
   handleWordBankWordsSubmit(event, id) {
@@ -94,7 +93,6 @@ class WizardDetail extends React.Component {
       activity.wordList.push(this.props.student.highFrequencyWords[i]);
     }
     this.setState({ wordBankActivity: activity });
-    this.handleNext(event, id);
     // TODO: should we now show the word list as tags and let the user change them?
   }
 
@@ -187,11 +185,20 @@ class WizardDetail extends React.Component {
   }
 
   handleLessonPlanDone(event) {
+    console.log("here!");
     var lessonPlan = this.state;
+    console.log(lessonPlan.wordBankActivity);
+    // if (true) {
+    //   event.preventDefault();
+    //   // return;
+    // }
+
     if (lessonPlan.wordBankActivity.wordList.length > 5 &&
           lessonPlan.wordBankActivity.game !== Constants.BingoNum) {
       lessonPlan.wordBankActivity.wordList = lessonPlan.wordBankActivity.wordList.splice(0, 5);
     }
+
+
     event.preventDefault();
     this.props.handleNewLessonPlan(lessonPlan);
 
