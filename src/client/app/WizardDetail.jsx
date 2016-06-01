@@ -152,7 +152,6 @@ class WizardDetail extends React.Component {
   }
 
   handleWordBankActivityWordsSubmit(event, id) {
-    console.log(event);
     var activity = this.state.wordBankActivity;
     activity.wordList = event == null ? [] : event.split(";");
     this.setState({ wordBankActivity: activity });
@@ -272,6 +271,12 @@ class WizardDetail extends React.Component {
       return;
     }
 
+    if (lessonPlan.wordBankActivity.wordList.length == 0) {
+      for (var i = 0; i < 8 && i < this.props.student.highFrequencyWords.length; i++) {
+        lessonPlan.wordBankActivity.wordList.push(this.props.student.highFrequencyWords[i]);
+      }
+    }
+
     event.preventDefault();
     this.props.handleNewLessonPlan(lessonPlan);
 
@@ -295,25 +300,28 @@ class WizardDetail extends React.Component {
     var activity = this.state.wordBankActivity;
 
     var selected = []
-    if (typeof activity.wordList == "undefined") {
+    if (activity.wordList.length == 0) {
       for (var i = 0; i < 8 && i < this.props.student.highFrequencyWords.length; i++) {
         selected.push(this.props.student.highFrequencyWords[i]);
       }
     }
-    var selectedWordBankWords = typeof activity.wordList == "undefined" ? selected.join(";") : activity.wordList.join(";");
+    var selectedWordBankWords = activity.wordList.length == 0 ? selected.join(";") : activity.wordList.join(";");
     
 
     var wordBankWordOptions = [];
+    if (typeof activity.wordList !== "undefined") {
+      var numNewWords = typeof activity.numNewWords == "undefined" ? 0 : activity.numNewWords;
+      for (var i = 0; i < activity.wordList.length; i++) {
+        if (i < numNewWords) {
+          wordBankWordOptions.push({ value: activity.wordList[i], label: activity.wordList[i], clearableValue: false });
+        } else {
+          wordBankWordOptions.push({ value: activity.wordList[i], label: activity.wordList[i] });
+        }
+      }
+    }
     this.props.student.highFrequencyWords.map(function(name) {
       wordBankWordOptions.push({ value: name, label: name });
     });
-    if (typeof activity.wordList !== "undefined") {
-      activity.wordList.map(function(name) {
-        if (!wordBankWordOptions.includes({ value: name, label: name })) {
-          wordBankWordOptions.push({ value: name, label: name });
-        }
-      });
-    }
 
     var self = this;
     var newBookOptions = [];
