@@ -96,7 +96,6 @@ class WizardDetail extends React.Component {
     }
     this.setState({ wordBankActivity: activity });
     this.setState({ updatedWordList: true });
-    this.handleNext(event, id);
     this.forceUpdate();
   }
 
